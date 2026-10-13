@@ -1,0 +1,708 @@
+{% extends "base.html" %}
+
+{% block title %}Interactive Timetable{% endblock %}
+{% block page_title %}Academic Timetable{% endblock %}
+{% block page_subtitle %}Interactive schedule grid with multi-dimensional filtering, conflict prevention, and session locking{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Filter Bar & Control Panel -->
+    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-4 no-print">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <!-- View Type Selector Tabs -->
+            <div class="flex items-center space-x-1 bg-slate-100 p-1 rounded-xl w-fit">
+                <button type="button" onclick="switchViewType('programme')" id="tab-programme" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-white text-indigo-700 shadow-xs transition-all view-tab">
+                    <i data-lucide="graduation-cap" class="w-3.5 h-3.5 inline mr-1"></i>
+                    Section View
+                </button>
+                <button type="button" onclick="switchViewType('faculty')" id="tab-faculty" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition-all view-tab">
+                    <i data-lucide="users" class="w-3.5 h-3.5 inline mr-1"></i>
+                    Faculty View
+                </button>
+                <button type="button" onclick="switchViewType('room')" id="tab-room" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition-all view-tab">
+                    <i data-lucide="building-2" class="w-3.5 h-3.5 inline mr-1"></i>
+                    Room / Lab View
+                </button>
+            </div>
+
+            <!-- Legend & Utility Actions -->
+            <div class="flex flex-wrap items-center gap-3">
+                <!-- Color Legend -->
+                <div class="hidden xl:flex items-center space-x-3 text-xs text-slate-600 border-r border-slate-200 pr-3">
+                    <span class="flex items-center">
+                        <span class="w-3 h-3 rounded bg-blue-100 border border-blue-300 mr-1.5"></span> Theory
+                    </span>
+                    <span class="flex items-center">
+                        <span class="w-3 h-3 rounded bg-emerald-100 border border-emerald-300 mr-1.5"></span> Practical
+                    </span>
+                    <span class="flex items-center">
+                        <span class="w-3 h-3 rounded bg-amber-100 border border-amber-300 mr-1.5"></span> Fixed Slot
+                    </span>
+                    <span class="flex items-center">
+                        <i data-lucide="lock" class="w-3 h-3 text-slate-500 mr-1"></i> Locked
+                    </span>
+                </div>
+
+                <!-- Print Button -->
+                <button type="button" onclick="window.print()" class="inline-flex items-center px-3.5 py-2 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold transition-colors">
+                    <i data-lucide="printer" class="w-3.5 h-3.5 mr-1.5"></i>
+                    Print
+                </button>
+
+                <!-- Regenerate Button -->
+                <button type="button" onclick="handleRegenerate()" id="regen-btn" class="inline-flex items-center px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-xs transition-colors">
+                    <i data-lucide="refresh-cw" class="w-3.5 h-3.5 mr-1.5"></i>
+                    Regenerate
+                </button>
+            </div>
+        </div>
+
+        <!-- Filter Selectors by View Type -->
+        <div class="pt-3 border-t border-slate-100">
+            <!-- Programme / Section Filters -->
+            <div id="filter-group-programme" class="grid grid-cols-1 sm:grid-cols-3 gap-3 filter-group">
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Programme</label>
+                    <select id="select-programme" onchange="onTimetableProgChange()" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-indigo-500 bg-white">
+                        {% if programmes %}
+                            {% for p in programmes %}
+                            <option value="{{ p.id }}">{{ p.code }} - {{ p.name }}</option>
+                            {% endfor %}
+                        {% else %}
+                            <option value="">No programmes found</option>
+                        {% endif %}
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Semester</label>
+                    <select id="select-semester" onchange="onTimetableSemChange()" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-indigo-500 bg-white">
+                        <option value="">Select Semester</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Section</label>
+                    <select id="select-section" onchange="fetchAndRenderTimetable()" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-indigo-500 bg-white font-medium text-indigo-700">
+                        <option value="">Select Section</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Faculty Filter -->
+            <div id="filter-group-faculty" class="hidden filter-group">
+                <div class="max-w-md">
+                    <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Select Professor / Faculty Member</label>
+                    <select id="select-faculty" onchange="fetchAndRenderTimetable()" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-indigo-500 bg-white font-medium text-indigo-700">
+                        {% if faculty %}
+                            {% for f in faculty %}
+                            <option value="{{ f.id }}">{{ f.name }} ({{ f.employee_id }})</option>
+                            {% endfor %}
+                        {% else %}
+                            <option value="">No faculty registered</option>
+                        {% endif %}
+                    </select>
+                </div>
+            </div>
+
+            <!-- Room Filter -->
+            <div id="filter-group-room" class="hidden filter-group">
+                <div class="max-w-md">
+                    <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Select Classroom / Laboratory</label>
+                    <select id="select-room" onchange="fetchAndRenderTimetable()" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-indigo-500 bg-white font-medium text-indigo-700">
+                        {% if rooms %}
+                            {% for r in rooms %}
+                            <option value="{{ r.id }}">{{ r.name }} ({{ r.room_type|capitalize }}{% if r.lab_type %} - {{ r.lab_type }}{% endif %})</option>
+                            {% endfor %}
+                        {% else %}
+                            <option value="">No rooms configured</option>
+                        {% endif %}
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Schedule Info Banner (Print Header & View Context) -->
+    <div class="bg-indigo-50/70 border border-indigo-100 rounded-xl px-5 py-3 flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-indigo-600 animate-pulse"></span>
+            <span class="text-xs font-semibold text-indigo-900" id="current-view-badge">Schedule View</span>
+            <span class="text-xs text-indigo-700 font-medium" id="current-view-target">Loading...</span>
+        </div>
+        <div class="text-xs text-indigo-600 font-medium">
+            Academic Year 2026-27 &bull; NFSU Gandhinagar
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div id="grid-loading" class="bg-white rounded-2xl border border-slate-200 p-16 text-center shadow-xs">
+        <svg class="animate-spin h-8 w-8 text-indigo-600 mx-auto mb-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <p class="text-sm font-semibold text-slate-700">Loading Timetable Grid...</p>
+        <p class="text-xs text-slate-400 mt-1">Fetching session matrix and checking slot allocations</p>
+    </div>
+
+    <!-- Empty State (No timetable generated yet) -->
+    <div id="grid-empty" class="hidden bg-white rounded-2xl border border-slate-200 p-16 text-center shadow-xs">
+        <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+            <i data-lucide="calendar-off" class="w-8 h-8"></i>
+        </div>
+        <h3 class="text-base font-bold text-slate-800 mb-1">No Timetable Generated</h3>
+        <p class="text-sm text-slate-500 max-w-sm mx-auto mb-6">There are no scheduled sessions found for this academic semester. Run the generator to automatically allocate all courses.</p>
+        <button type="button" onclick="handleRegenerate()" class="inline-flex items-center px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold shadow-md shadow-indigo-600/30">
+            <i data-lucide="sparkles" class="w-4 h-4 mr-2"></i>
+            Generate Timetable Now
+        </button>
+    </div>
+
+    <!-- Timetable Grid Container -->
+    <div id="grid-container" class="hidden bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full border-collapse text-left" id="timetable-table">
+                <thead id="grid-thead">
+                    <!-- Dynamic Periods Header -->
+                </thead>
+                <tbody id="grid-tbody" class="divide-y divide-slate-200">
+                    <!-- Dynamic Weekday Rows -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Edit Scheduled Session -->
+<div id="session-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 border border-slate-100">
+        <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
+            <div>
+                <h3 class="text-base font-bold text-slate-900" id="session-modal-title">Edit Session</h3>
+                <p class="text-xs text-slate-500" id="session-modal-subtitle">Modify scheduled time or room</p>
+            </div>
+            <button type="button" onclick="closeSessionModal()" class="text-slate-400 hover:text-slate-600">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <form id="session-edit-form" onsubmit="handleSaveSession(event)" class="space-y-4">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <input type="hidden" id="edit-session-id" value="">
+
+            <!-- Session Details Summary -->
+            <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-1.5 text-xs">
+                <div class="flex justify-between">
+                    <span class="text-slate-500">Subject:</span>
+                    <span class="font-bold text-slate-900" id="modal-sub-name">-</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-500">Instructor:</span>
+                    <span class="font-medium text-slate-800" id="modal-fac-name">-</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-500">Section:</span>
+                    <span class="font-medium text-slate-800" id="modal-sec-name">-</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-500">Session Type:</span>
+                    <span class="font-semibold capitalize text-indigo-700" id="modal-type-badge">-</span>
+                </div>
+            </div>
+
+            <!-- Editable Day -->
+            <div>
+                <label for="edit-day" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Day of Week *</label>
+                <select id="edit-day" required class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 bg-white">
+                    <option value="Monday">Monday</option>
+                    <option value="Tuesday">Tuesday</option>
+                    <option value="Wednesday">Wednesday</option>
+                    <option value="Thursday">Thursday</option>
+                    <option value="Friday">Friday</option>
+                    <option value="Saturday">Saturday</option>
+                </select>
+            </div>
+
+            <!-- Editable Time Slot -->
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label for="edit-start-time" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Start Time *</label>
+                    <input type="time" id="edit-start-time" required class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label for="edit-end-time" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">End Time *</label>
+                    <input type="time" id="edit-end-time" required class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500">
+                </div>
+            </div>
+
+            <!-- Editable Room -->
+            <div>
+                <label for="edit-room" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Assigned Room / Lab *</label>
+                <select id="edit-room" required class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 bg-white">
+                    {% if rooms %}
+                        {% for r in rooms %}
+                        <option value="{{ r.id }}">{{ r.name }} ({{ r.room_type|capitalize }}{% if r.lab_type %} - {{ r.lab_type }}{% endif %})</option>
+                        {% endfor %}
+                    {% endif %}
+                </select>
+            </div>
+
+            <!-- Lock / Unlock Toggle -->
+            <div class="pt-2 flex items-center justify-between border-t border-slate-100">
+                <button type="button" id="toggle-lock-btn" onclick="handleToggleLock()" class="inline-flex items-center px-3 py-1.5 rounded-lg border border-slate-300 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors">
+                    <i data-lucide="lock" id="modal-lock-icon" class="w-3.5 h-3.5 mr-1.5 text-slate-500"></i>
+                    <span id="modal-lock-text">Lock Session</span>
+                </button>
+
+                <div class="flex items-center space-x-2">
+                    <button type="button" onclick="closeSessionModal()" class="px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-lg">Cancel</button>
+                    <button type="submit" id="save-session-btn" class="px-5 py-2 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-sm">Save Changes</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const programmesData = {{ programmes|tojson if programmes else '[]' }};
+    const facultyData = {{ faculty|tojson if faculty else '[]' }};
+    const roomsData = {{ rooms|tojson if rooms else '[]' }};
+    const subjectsData = {{ subjects|tojson if subjects else '[]' }};
+    const settingsData = {{ settings|tojson if settings else '{}' }};
+
+    let currentViewType = 'programme';
+    let currentLoadedSessions = [];
+    let activeSessionToEdit = null;
+
+    // Initialize cascading selectors on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        initProgrammeDropdowns();
+        fetchAndRenderTimetable();
+    });
+
+    function initProgrammeDropdowns() {
+        if (programmesData.length > 0) {
+            onTimetableProgChange();
+        }
+    }
+
+    function onTimetableProgChange() {
+        const progSelect = document.getElementById('select-programme');
+        const semSelect = document.getElementById('select-semester');
+        const progId = progSelect.value;
+
+        semSelect.innerHTML = '';
+        const prog = programmesData.find(p => p.id === progId);
+        if (prog && prog.semesters && prog.semesters.length > 0) {
+            prog.semesters.forEach(s => {
+                const opt = document.createElement('option');
+                opt.value = s.id;
+                opt.textContent = `Semester ${s.number}`;
+                semSelect.appendChild(opt);
+            });
+            onTimetableSemChange();
+        } else {
+            semSelect.innerHTML = '<option value="">No semesters</option>';
+            document.getElementById('select-section').innerHTML = '<option value="">No sections</option>';
+        }
+    }
+
+    function onTimetableSemChange() {
+        const progSelect = document.getElementById('select-programme');
+        const semSelect = document.getElementById('select-semester');
+        const secSelect = document.getElementById('select-section');
+        const progId = progSelect.value;
+        const semId = semSelect.value;
+
+        secSelect.innerHTML = '';
+        const prog = programmesData.find(p => p.id === progId);
+        if (prog && prog.semesters) {
+            const sem = prog.semesters.find(s => s.id === semId);
+            if (sem && sem.sections && sem.sections.length > 0) {
+                sem.sections.forEach(sec => {
+                    const opt = document.createElement('option');
+                    opt.value = sec.id;
+                    opt.textContent = `Section ${sec.name}`;
+                    secSelect.appendChild(opt);
+                });
+            } else {
+                secSelect.innerHTML = '<option value="">No sections</option>';
+            }
+        }
+    }
+
+    function switchViewType(type) {
+        currentViewType = type;
+        document.querySelectorAll('.view-tab').forEach(b => {
+            b.classList.remove('bg-white', 'text-indigo-700', 'shadow-xs');
+            b.classList.add('text-slate-600');
+        });
+        const activeTab = document.getElementById(`tab-${type}`);
+        if (activeTab) {
+            activeTab.classList.remove('text-slate-600');
+            activeTab.classList.add('bg-white', 'text-indigo-700', 'shadow-xs');
+        }
+
+        document.querySelectorAll('.filter-group').forEach(fg => fg.classList.add('hidden'));
+        const activeGroup = document.getElementById(`filter-group-${type}`);
+        if (activeGroup) activeGroup.classList.remove('hidden');
+
+        fetchAndRenderTimetable();
+    }
+
+    async function fetchAndRenderTimetable() {
+        const loadingEl = document.getElementById('grid-loading');
+        const emptyEl = document.getElementById('grid-empty');
+        const containerEl = document.getElementById('grid-container');
+
+        loadingEl.classList.remove('hidden');
+        emptyEl.classList.add('hidden');
+        containerEl.classList.add('hidden');
+
+        let queryParams = `?view_type=${currentViewType}`;
+        let targetLabel = '';
+
+        if (currentViewType === 'programme') {
+            const secId = document.getElementById('select-section').value;
+            const progId = document.getElementById('select-programme').value;
+            const semId = document.getElementById('select-semester').value;
+            queryParams += `&programme_id=${progId}&semester_id=${semId}&section_id=${secId}`;
+
+            const prog = programmesData.find(p => p.id === progId);
+            const semSelect = document.getElementById('select-semester');
+            const secSelect = document.getElementById('select-section');
+            const semText = semSelect.options[semSelect.selectedIndex]?.text || '';
+            const secText = secSelect.options[secSelect.selectedIndex]?.text || '';
+            targetLabel = `${prog ? prog.code : ''} ${semText} - ${secText}`;
+            document.getElementById('current-view-badge').textContent = 'Section Timetable';
+        } else if (currentViewType === 'faculty') {
+            const facId = document.getElementById('select-faculty').value;
+            queryParams += `&faculty_id=${facId}`;
+            const fac = facultyData.find(f => f.id === facId);
+            targetLabel = fac ? fac.name : 'All Faculty';
+            document.getElementById('current-view-badge').textContent = 'Faculty Schedule';
+        } else if (currentViewType === 'room') {
+            const roomId = document.getElementById('select-room').value;
+            queryParams += `&room_id=${roomId}`;
+            const rm = roomsData.find(r => r.id === roomId);
+            targetLabel = rm ? rm.name : 'All Rooms';
+            document.getElementById('current-view-badge').textContent = 'Room Allocation';
+        }
+
+        document.getElementById('current-view-target').textContent = targetLabel;
+
+        try {
+            const data = await apiCall(`/api/timetable-data${queryParams}`);
+            currentLoadedSessions = data.sessions || data.scheduled_sessions || [];
+
+            if (!currentLoadedSessions || currentLoadedSessions.length === 0) {
+                // If the entire timetable state is empty, show empty state
+                if (data.timetable_state && (!data.timetable_state.status || data.timetable_state.status === 'draft') && currentLoadedSessions.length === 0) {
+                    loadingEl.classList.add('hidden');
+                    emptyEl.classList.remove('hidden');
+                    return;
+                }
+            }
+
+            renderGrid(data);
+            loadingEl.classList.add('hidden');
+            containerEl.classList.remove('hidden');
+        } catch (err) {
+            console.warn('API /api/timetable-data error, rendering local fallback:', err);
+            // Render grid using local settings and sessions
+            renderGrid({
+                sessions: currentLoadedSessions,
+                days: settingsData.working_days || ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+                periods: generateDefaultPeriods()
+            });
+            loadingEl.classList.add('hidden');
+            containerEl.classList.remove('hidden');
+        }
+    }
+
+    function generateDefaultPeriods() {
+        const start = settingsData.start_time || '09:00';
+        const end = settingsData.end_time || '17:00';
+        const duration = settingsData.period_duration || 60;
+        const breaks = settingsData.breaks || [];
+
+        const periods = [];
+        let [curH, curM] = start.split(':').map(Number);
+        const [endH, endM] = end.split(':').map(Number);
+        const endMinutes = endH * 60 + endM;
+
+        let periodIndex = 1;
+        while ((curH * 60 + curM) < endMinutes) {
+            const curMinutes = curH * 60 + curM;
+            const startStr = `${String(curH).padStart(2, '0')}:${String(curM).padStart(2, '0')}`;
+            
+            // Check if current start aligns with a break
+            const brk = breaks.find(b => b.start === startStr);
+            if (brk) {
+                const [bEndH, bEndM] = brk.end.split(':').map(Number);
+                periods.push({
+                    name: brk.name || 'Break',
+                    start: brk.start,
+                    end: brk.end,
+                    is_break: true
+                });
+                curH = bEndH;
+                curM = bEndM;
+                continue;
+            }
+
+            const nextMinutes = curMinutes + duration;
+            if (nextMinutes > endMinutes) break;
+
+            const nH = Math.floor(nextMinutes / 60);
+            const nM = nextMinutes % 60;
+            const endStr = `${String(nH).padStart(2, '0')}:${String(nM).padStart(2, '0')}`;
+
+            periods.push({
+                name: `Period ${periodIndex}`,
+                start: startStr,
+                end: endStr,
+                is_break: false
+            });
+
+            curH = nH;
+            curM = nM;
+            periodIndex++;
+        }
+
+        return periods;
+    }
+
+    function renderGrid(data) {
+        const thead = document.getElementById('grid-thead');
+        const tbody = document.getElementById('grid-tbody');
+        const days = data.days || settingsData.working_days || ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+        const periods = (data.periods && data.periods.length > 0) ? data.periods : generateDefaultPeriods();
+        const sessions = data.sessions || [];
+
+        // Build Header
+        let headHtml = '<tr class="bg-slate-100 text-slate-700 text-xs font-semibold uppercase tracking-wider border-b border-slate-300">';
+        headHtml += '<th class="px-4 py-3.5 w-28 text-center sticky left-0 bg-slate-100 z-10 border-r border-slate-200">Day</th>';
+        
+        periods.forEach(p => {
+            if (p.is_break) {
+                headHtml += `
+                    <th class="px-3 py-3.5 text-center bg-amber-50/80 text-amber-900 border-x border-amber-200 min-w-[100px]">
+                        <div class="font-bold flex items-center justify-center">
+                            <i data-lucide="coffee" class="w-3.5 h-3.5 mr-1 text-amber-600"></i> ${p.name}
+                        </div>
+                        <div class="text-[10px] font-normal text-amber-700 mt-0.5">${p.start} - ${p.end}</div>
+                    </th>
+                `;
+            } else {
+                headHtml += `
+                    <th class="px-4 py-3.5 text-center min-w-[170px] border-r border-slate-200">
+                        <div class="font-bold text-slate-800">${p.name}</div>
+                        <div class="text-[11px] font-medium text-slate-500 mt-0.5">${p.start} - ${p.end}</div>
+                    </th>
+                `;
+            }
+        });
+        headHtml += '</tr>';
+        thead.innerHTML = headHtml;
+
+        // Build Body Rows for each day
+        let bodyHtml = '';
+        days.forEach(day => {
+            bodyHtml += `<tr class="border-b border-slate-200 hover:bg-slate-50/50">`;
+            bodyHtml += `
+                <td class="px-4 py-3 font-bold text-xs text-slate-800 bg-slate-50 sticky left-0 z-10 border-r border-slate-200 text-center uppercase tracking-wider">
+                    ${day}
+                </td>
+            `;
+
+            periods.forEach(p => {
+                if (p.is_break) {
+                    bodyHtml += `
+                        <td class="px-2 py-3 bg-amber-50/40 text-center text-xs text-amber-800 font-medium border-x border-amber-100">
+                            <span class="text-[11px] text-amber-600 italic">Break</span>
+                        </td>
+                    `;
+                    return;
+                }
+
+                // Match session occurring during this period
+                // Session overlaps if session.day == day and session.start_time <= p.start < session.end_time
+                const matchingSessions = sessions.filter(s => {
+                    return s.day === day && s.start_time <= p.start && s.end_time > p.start;
+                });
+
+                if (matchingSessions.length === 0) {
+                    bodyHtml += `<td class="px-2 py-2.5 border-r border-slate-200 text-center text-xs text-slate-300 italic">-</td>`;
+                } else {
+                    bodyHtml += `<td class="p-2 border-r border-slate-200 align-top space-y-1.5">`;
+                    matchingSessions.forEach(s => {
+                        let colorTheme = 'bg-blue-50 border-blue-200 text-blue-900 hover:bg-blue-100';
+                        if (s.session_type === 'practical') {
+                            colorTheme = 'bg-emerald-50 border-emerald-200 text-emerald-900 hover:bg-emerald-100';
+                        } else if (s.is_fixed) {
+                            colorTheme = 'bg-amber-50 border-amber-200 text-amber-900 hover:bg-amber-100';
+                        }
+
+                        // Lookup helper details
+                        const sub = subjectsData.find(sub => sub.id === s.subject_id);
+                        const fac = facultyData.find(f => f.id === s.faculty_id);
+                        const rm = roomsData.find(r => r.id === s.room_id);
+
+                        const subCode = s.subject_code || (sub ? sub.code : 'SUB');
+                        const subName = s.subject_name || (sub ? sub.name : 'Course Session');
+                        const facName = s.faculty_name || (fac ? fac.name : 'Faculty');
+                        const roomName = s.room_name || (rm ? rm.name : 'Room');
+
+                        bodyHtml += `
+                            <div onclick="openEditSessionModal('${s.id}')" class="p-2.5 rounded-xl border ${colorTheme} cursor-pointer transition-all shadow-2xs group relative">
+                                <div class="flex items-center justify-between gap-1 mb-1">
+                                    <span class="font-bold text-xs truncate" title="${subName}">${subCode}</span>
+                                    <div class="flex items-center space-x-1 flex-shrink-0">
+                                        ${s.is_locked ? '<i data-lucide="lock" class="w-3 h-3 text-slate-500"></i>' : ''}
+                                        <span class="text-[9px] font-bold uppercase px-1 rounded ${s.session_type === 'practical' ? 'bg-emerald-200/60 text-emerald-800' : 'bg-blue-200/60 text-blue-800'}">
+                                            ${s.session_type === 'practical' ? 'LAB' : 'TH'}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="text-[11px] truncate text-slate-700 font-medium mb-0.5" title="${facName}">
+                                    <i data-lucide="user" class="w-3 h-3 inline mr-0.5 text-slate-400"></i> ${facName}
+                                </div>
+                                <div class="flex items-center justify-between text-[10px] text-slate-500">
+                                    <span class="truncate"><i data-lucide="map-pin" class="w-2.5 h-2.5 inline mr-0.5 text-slate-400"></i> ${roomName}</span>
+                                    ${s.batch_name ? `<span class="font-semibold text-emerald-700">(${s.batch_name})</span>` : ''}
+                                </div>
+                            </div>
+                        `;
+                    });
+                    bodyHtml += `</td>`;
+                }
+            });
+
+            bodyHtml += `</tr>`;
+        });
+
+        tbody.innerHTML = bodyHtml;
+        refreshIcons();
+    }
+
+    function openEditSessionModal(sessionId) {
+        activeSessionToEdit = currentLoadedSessions.find(s => s.id === sessionId);
+        if (!activeSessionToEdit) {
+            showToast('Session details not loaded', 'error');
+            return;
+        }
+
+        const s = activeSessionToEdit;
+        const sub = subjectsData.find(item => item.id === s.subject_id);
+        const fac = facultyData.find(item => item.id === s.faculty_id);
+
+        document.getElementById('edit-session-id').value = s.id;
+        document.getElementById('modal-sub-name').textContent = `${s.subject_name || (sub ? sub.name : '')} (${s.subject_code || (sub ? sub.code : '')})`;
+        document.getElementById('modal-fac-name').textContent = s.faculty_name || (fac ? fac.name : 'Unknown');
+        document.getElementById('modal-sec-name').textContent = s.section_name || 'Section A';
+        document.getElementById('modal-type-badge').textContent = s.session_type || 'theory';
+
+        document.getElementById('edit-day').value = s.day || 'Monday';
+        document.getElementById('edit-start-time').value = s.start_time || '09:00';
+        document.getElementById('edit-end-time').value = s.end_time || '10:00';
+        document.getElementById('edit-room').value = s.room_id || '';
+
+        updateModalLockUI(!!s.is_locked);
+
+        document.getElementById('session-modal').classList.remove('hidden');
+        refreshIcons();
+    }
+
+    function closeSessionModal() {
+        document.getElementById('session-modal').classList.add('hidden');
+        activeSessionToEdit = null;
+    }
+
+    function updateModalLockUI(isLocked) {
+        const text = document.getElementById('modal-lock-text');
+        const btn = document.getElementById('toggle-lock-btn');
+        if (isLocked) {
+            text.textContent = 'Unlock Session';
+            btn.className = 'inline-flex items-center px-3 py-1.5 rounded-lg border border-amber-300 bg-amber-50 text-xs font-semibold text-amber-800 transition-colors';
+        } else {
+            text.textContent = 'Lock Session';
+            btn.className = 'inline-flex items-center px-3 py-1.5 rounded-lg border border-slate-300 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors';
+        }
+    }
+
+    async function handleToggleLock() {
+        if (!activeSessionToEdit) return;
+        const newLockState = !activeSessionToEdit.is_locked;
+        activeSessionToEdit.is_locked = newLockState;
+        updateModalLockUI(newLockState);
+
+        try {
+            await apiCall('/api/timetable/session/update', 'POST', {
+                session_id: activeSessionToEdit.id,
+                is_locked: newLockState
+            });
+            showToast(newLockState ? 'Session locked against re-generation' : 'Session unlocked', 'info');
+            fetchAndRenderTimetable();
+        } catch (err) {
+            console.warn('Could not persist lock toggle immediately:', err);
+        }
+    }
+
+    async function handleSaveSession(e) {
+        e.preventDefault();
+        const btn = document.getElementById('save-session-btn');
+        btn.disabled = true;
+
+        const payload = {
+            session_id: document.getElementById('edit-session-id').value,
+            day: document.getElementById('edit-day').value,
+            start_time: document.getElementById('edit-start-time').value,
+            end_time: document.getElementById('edit-end-time').value,
+            room_id: document.getElementById('edit-room').value,
+            is_locked: activeSessionToEdit ? !!activeSessionToEdit.is_locked : false
+        };
+
+        try {
+            let res;
+            try {
+                res = await apiCall('/api/timetable/session/update', 'POST', payload);
+            } catch (e1) {
+                res = await apiCall(`/api/sessions/${payload.session_id}`, 'PUT', payload);
+            }
+
+            showToast(res.message || 'Session adjusted successfully!', 'success');
+            closeSessionModal();
+            fetchAndRenderTimetable();
+        } catch (err) {
+            showToast(err.message || 'Failed to update session. Check for schedule clashes.', 'error');
+            btn.disabled = false;
+        }
+    }
+
+    async function handleRegenerate() {
+        const ok = await confirmAction('Regenerating will recalculate un-locked timetable slots. Locked sessions will be preserved.', 'Regenerate Timetable?');
+        if (!ok) return;
+
+        const btn = document.getElementById('regen-btn');
+        btn.disabled = true;
+
+        try {
+            let res;
+            try {
+                res = await apiCall('/api/generate', 'POST', {});
+            } catch (e) {
+                res = await apiCall('/api/timetable/generate', 'POST', {});
+            }
+            showToast(res.message || 'Timetable regenerated successfully!', 'success');
+            setTimeout(() => {
+                btn.disabled = false;
+                fetchAndRenderTimetable();
+            }, 1000);
+        } catch (err) {
+            showToast(err.message || 'Failed to regenerate timetable', 'error');
+            btn.disabled = false;
+        }
+    }
+</script>
+{% endblock %}

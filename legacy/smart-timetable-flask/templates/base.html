@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>{% block title %}Dashboard{% endblock %} | NFSU Smart Timetable</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            800: '#1e293b',
+                            900: '#0f172a'
+                        },
+                        indigo: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            800: '#3730a3'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* Print Styles */
+        @media print {
+            .no-print, nav, aside, header, #toast-container, #confirmation-modal {
+                display: none !important;
+            }
+            main {
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 100% !important;
+                background: white !important;
+            }
+            .print-only {
+                display: block !important;
+            }
+            body {
+                background: white !important;
+                color: #0f172a !important;
+            }
+            .page-break {
+                page-break-before: always;
+            }
+        }
+        @media screen {
+            .print-only {
+                display: none !important;
+            }
+        }
+        /* Custom scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="h-full text-slate-800 antialiased flex flex-col font-sans">
+    <!-- Hidden input fallback for csrf_token -->
+    <input type="hidden" id="csrf-token-val" name="csrf_token" value="{{ csrf_token }}">
+
+    <div class="flex h-screen overflow-hidden bg-slate-50">
+        <!-- Sidebar Navigation -->
+        <aside id="sidebar" class="no-print w-64 bg-slate-900 text-slate-200 flex flex-col flex-shrink-0 transition-all duration-300 z-30 shadow-xl">
+            <!-- Brand Header -->
+            <div class="h-16 flex items-center px-5 border-b border-slate-800 bg-slate-950">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold shadow-md shadow-indigo-500/30">
+                        <i data-lucide="shield-check" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <div class="font-bold text-base text-white tracking-wide leading-tight">NFSU</div>
+                        <div class="text-xs text-indigo-300 font-medium tracking-tight">Smart Timetable</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- University Badge -->
+            <div class="px-5 py-3 border-b border-slate-800/60 bg-slate-900/50">
+                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Institution</p>
+                <p class="text-xs font-medium text-slate-300 truncate" title="{{ settings.name if settings else 'National Forensic Sciences University' }}">
+                    {{ settings.name if settings else 'National Forensic Sciences University' }}
+                </p>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+                <a href="/dashboard" class="flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {% if active_page == 'dashboard' %}bg-indigo-600 text-white shadow-sm shadow-indigo-600/30{% else %}text-slate-300 hover:bg-slate-800 hover:text-white{% endif %}">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5 mr-3 {% if active_page == 'dashboard' %}text-white{% else %}text-slate-400{% endif %}"></i>
+                    <span>Dashboard</span>
+                </a>
+
+                <a href="/timetable" class="flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {% if active_page == 'timetable' %}bg-indigo-600 text-white shadow-sm shadow-indigo-600/30{% else %}text-slate-300 hover:bg-slate-800 hover:text-white{% endif %}">
+                    <i data-lucide="calendar" class="w-5 h-5 mr-3 {% if active_page == 'timetable' %}text-white{% else %}text-slate-400{% endif %}"></i>
+                    <span>Timetable</span>
+                </a>
+
+                <div class="pt-3 pb-1">
+                    <p class="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Academic Setup</p>
+                </div>
+
+                <a href="/programmes" class="flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {% if active_page == 'programmes' %}bg-indigo-600 text-white shadow-sm shadow-indigo-600/30{% else %}text-slate-300 hover:bg-slate-800 hover:text-white{% endif %}">
+                    <i data-lucide="graduation-cap" class="w-5 h-5 mr-3 {% if active_page == 'programmes' %}text-white{% else %}text-slate-400{% endif %}"></i>
+                    <span>Programmes</span>
+                </a>
+
+                <a href="/faculty" class="flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {% if active_page == 'faculty' %}bg-indigo-600 text-white shadow-sm shadow-indigo-600/30{% else %}text-slate-300 hover:bg-slate-800 hover:text-white{% endif %}">
+                    <i data-lucide="users" class="w-5 h-5 mr-3 {% if active_page == 'faculty' %}text-white{% else %}text-slate-400{% endif %}"></i>
+                    <span>Faculty</span>
+                </a>
+
+                <a href="/rooms" class="flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {% if active_page == 'rooms' %}bg-indigo-600 text-white shadow-sm shadow-indigo-600/30{% else %}text-slate-300 hover:bg-slate-800 hover:text-white{% endif %}">
+                    <i data-lucide="building-2" class="w-5 h-5 mr-3 {% if active_page == 'rooms' %}text-white{% else %}text-slate-400{% endif %}"></i>
+                    <span>Rooms & Labs</span>
+                </a>
+
+                <a href="/subjects" class="flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {% if active_page == 'subjects' %}bg-indigo-600 text-white shadow-sm shadow-indigo-600/30{% else %}text-slate-300 hover:bg-slate-800 hover:text-white{% endif %}">
+                    <i data-lucide="book-open" class="w-5 h-5 mr-3 {% if active_page == 'subjects' %}text-white{% else %}text-slate-400{% endif %}"></i>
+                    <span>Subjects</span>
+                </a>
+
+                <div class="pt-3 pb-1">
+                    <p class="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Review & Output</p>
+                </div>
+
+                <a href="/conflicts" class="flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {% if active_page == 'conflicts' %}bg-indigo-600 text-white shadow-sm shadow-indigo-600/30{% else %}text-slate-300 hover:bg-slate-800 hover:text-white{% endif %}">
+                    <i data-lucide="alert-triangle" class="w-5 h-5 mr-3 {% if active_page == 'conflicts' %}text-white{% else %}text-slate-400{% endif %}"></i>
+                    <span>Conflicts & Audit</span>
+                </a>
+
+                <a href="/export" class="flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {% if active_page == 'export' %}bg-indigo-600 text-white shadow-sm shadow-indigo-600/30{% else %}text-slate-300 hover:bg-slate-800 hover:text-white{% endif %}">
+                    <i data-lucide="share-2" class="w-5 h-5 mr-3 {% if active_page == 'export' %}text-white{% else %}text-slate-400{% endif %}"></i>
+                    <span>Publish & Export</span>
+                </a>
+
+                <a href="/settings" class="flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {% if active_page == 'settings' %}bg-indigo-600 text-white shadow-sm shadow-indigo-600/30{% else %}text-slate-300 hover:bg-slate-800 hover:text-white{% endif %}">
+                    <i data-lucide="settings" class="w-5 h-5 mr-3 {% if active_page == 'settings' %}text-white{% else %}text-slate-400{% endif %}"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+
+            <!-- Sidebar Footer Status -->
+            <div class="p-4 border-t border-slate-800 text-xs text-slate-400 bg-slate-950/60">
+                <div class="flex items-center justify-between mb-1">
+                    <span class="font-medium text-slate-300">Timetable State</span>
+                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold {% if timetable_state and timetable_state.status == 'published' %}bg-emerald-950 text-emerald-300 border border-emerald-800{% elif timetable_state and timetable_state.status == 'generated' %}bg-blue-950 text-blue-300 border border-blue-800{% else %}bg-slate-800 text-slate-300{% endif %}">
+                        {{ timetable_state.status|upper if timetable_state else 'DRAFT' }}
+                    </span>
+                </div>
+                <div class="text-[11px] text-slate-400 truncate">NFSU Gandhinagar</div>
+            </div>
+        </aside>
+
+        <!-- Main Body Wrapper -->
+        <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-slate-50">
+            <!-- Top Navigation Bar -->
+            <header class="no-print h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 z-20">
+                <div class="flex items-center space-x-3">
+                    <button id="toggle-sidebar-btn" type="button" class="md:hidden text-slate-500 hover:text-slate-700 focus:outline-none">
+                        <i data-lucide="menu" class="w-6 h-6"></i>
+                    </button>
+                    <div>
+                        <h1 class="text-xl font-bold text-slate-800 tracking-tight leading-tight">
+                            {% block page_title %}Dashboard{% endblock %}
+                        </h1>
+                        <p class="text-xs text-slate-500 font-medium hidden sm:block">
+                            {% block page_subtitle %}National Forensic Sciences University • Academic Portal{% endblock %}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                    <div class="hidden lg:flex items-center space-x-2 text-xs text-slate-500 bg-slate-100 py-1.5 px-3 rounded-full border border-slate-200">
+                        <i data-lucide="shield" class="w-3.5 h-3.5 text-indigo-600"></i>
+                        <span class="font-medium text-slate-700">{{ settings.department if settings else 'Cyber Security & Digital Forensics' }}</span>
+                    </div>
+
+                    <a href="/timetable" class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-indigo-600 bg-indigo-50 border border-indigo-200 rounded-lg hover:bg-indigo-100 transition-colors">
+                        <i data-lucide="calendar" class="w-3.5 h-3.5 mr-1.5"></i>
+                        View Grid
+                    </a>
+                </div>
+            </header>
+
+            <!-- Main Scrollable Content -->
+            <main class="flex-1 overflow-y-auto p-6 md:p-8">
+                {% block content %}{% endblock %}
+            </main>
+
+            <!-- Page Footer -->
+            <footer class="no-print bg-white border-t border-slate-200 py-3 px-6 text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-2">
+                <div>
+                    &copy; 2026 <span class="font-semibold text-slate-700">National Forensic Sciences University</span>. All rights reserved.
+                </div>
+                <div class="flex items-center space-x-4 text-slate-400">
+                    <span>An Institution of National Importance</span>
+                    <span>•</span>
+                    <span>Ministry of Home Affairs, GoI</span>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="no-print fixed top-5 right-5 z-50 flex flex-col space-y-3 pointer-events-none max-w-sm w-full"></div>
+
+    <!-- Confirmation Modal System -->
+    <div id="confirmation-modal" class="no-print fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 border border-slate-100 transform transition-all scale-100">
+            <div class="flex items-start space-x-4">
+                <div id="confirm-icon-container" class="w-10 h-10 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+                </div>
+                <div class="flex-1">
+                    <h3 id="confirm-modal-title" class="text-base font-bold text-slate-800">Confirm Action</h3>
+                    <p id="confirm-modal-message" class="text-sm text-slate-600 mt-1 leading-relaxed">Are you sure you want to proceed?</p>
+                </div>
+            </div>
+            <div class="mt-6 flex items-center justify-end space-x-3">
+                <button id="confirm-cancel-btn" type="button" class="px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">
+                    Cancel
+                </button>
+                <button id="confirm-proceed-btn" type="button" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-sm transition-colors">
+                    Confirm
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Global JavaScript Utilities -->
+    <script>
+        // Initialize Lucide icons
+        function refreshIcons() {
+            if (window.lucide) {
+                window.lucide.createIcons();
+            }
+        }
+        document.addEventListener('DOMContentLoaded', refreshIcons);
+
+        // Sidebar mobile toggle
+        const toggleSidebarBtn = document.getElementById('toggle-sidebar-btn');
+        const sidebar = document.getElementById('sidebar');
+        if (toggleSidebarBtn && sidebar) {
+            toggleSidebarBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('hidden');
+            });
+        }
+
+        // Get CSRF Token
+        function getCsrfToken() {
+            const metaTag = document.querySelector('meta[name="csrf-token"]');
+            if (metaTag && metaTag.content) {
+                return metaTag.content;
+            }
+            const inputTag = document.getElementById('csrf-token-val');
+            if (inputTag && inputTag.value) {
+                return inputTag.value;
+            }
+            return '';
+        }
+
+        // Toast Notification System
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+
+            const toast = document.createElement('div');
+            toast.className = 'pointer-events-auto flex items-start p-4 rounded-xl shadow-lg border text-sm transition-all duration-300 transform translate-y-2 opacity-0';
+
+            let iconName = 'info';
+            let colorClasses = 'bg-white border-slate-200 text-slate-800';
+
+            if (type === 'success') {
+                iconName = 'check-circle-2';
+                colorClasses = 'bg-emerald-50 border-emerald-200 text-emerald-900';
+            } else if (type === 'error') {
+                iconName = 'alert-circle';
+                colorClasses = 'bg-rose-50 border-rose-200 text-rose-900';
+            } else if (type === 'warning') {
+                iconName = 'alert-triangle';
+                colorClasses = 'bg-amber-50 border-amber-200 text-amber-900';
+            } else {
+                iconName = 'info';
+                colorClasses = 'bg-indigo-50 border-indigo-200 text-indigo-900';
+            }
+
+            toast.className += ' ' + colorClasses;
+            toast.innerHTML = `
+                <div class="mr-3 flex-shrink-0 mt-0.5">
+                    <i data-lucide="${iconName}" class="w-5 h-5"></i>
+                </div>
+                <div class="flex-1 font-medium leading-snug">${message}</div>
+                <button type="button" class="ml-3 flex-shrink-0 text-slate-400 hover:text-slate-600 focus:outline-none" onclick="this.parentElement.remove()">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            `;
+
+            container.appendChild(toast);
+            refreshIcons();
+
+            // Animate in
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-y-2', 'opacity-0');
+            });
+
+            // Auto dismiss after 4 seconds
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => {
+                    if (toast.parentElement) toast.remove();
+                }, 300);
+            }, 4000);
+        }
+
+        // Confirmation Dialog System returning a Promise
+        function confirmAction(message, title = 'Confirm Action') {
+            return new Promise((resolve) => {
+                const modal = document.getElementById('confirmation-modal');
+                const titleEl = document.getElementById('confirm-modal-title');
+                const messageEl = document.getElementById('confirm-modal-message');
+                const proceedBtn = document.getElementById('confirm-proceed-btn');
+                const cancelBtn = document.getElementById('confirm-cancel-btn');
+
+                if (!modal || !proceedBtn || !cancelBtn) {
+                    resolve(window.confirm(message));
+                    return;
+                }
+
+                titleEl.textContent = title;
+                messageEl.textContent = message;
+
+                modal.classList.remove('hidden');
+
+                const cleanUp = () => {
+                    modal.classList.add('hidden');
+                    proceedBtn.removeEventListener('click', onConfirm);
+                    cancelBtn.removeEventListener('click', onCancel);
+                };
+
+                const onConfirm = () => {
+                    cleanUp();
+                    resolve(true);
+                };
+
+                const onCancel = () => {
+                    cleanUp();
+                    resolve(false);
+                };
+
+                proceedBtn.addEventListener('click', onConfirm);
+                cancelBtn.addEventListener('click', onCancel);
+            });
+        }
+
+        // Generic API Caller with CSRF token and error handling
+        async function apiCall(url, method = 'GET', data = null) {
+            const headers = {
+                'X-Requested-With': 'XMLHttpRequest'
+            };
+
+            const token = getCsrfToken();
+            if (token) {
+                headers['X-CSRFToken'] = token;
+                headers['X-CSRF-Token'] = token;
+            }
+
+            const options = {
+                method: method.toUpperCase(),
+                headers: headers
+            };
+
+            if (data !== null) {
+                if (data instanceof FormData) {
+                    options.body = data;
+                } else {
+                    headers['Content-Type'] = 'application/json';
+                    options.body = JSON.stringify(data);
+                }
+            }
+
+            try {
+                const response = await fetch(url, options);
+                let responseData;
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    responseData = await response.json();
+                } else {
+                    responseData = { message: await response.text() };
+                }
+
+                if (!response.ok) {
+                    const errorMsg = (responseData && (responseData.error || responseData.message)) 
+                        ? (responseData.error || responseData.message) 
+                        : `Request failed with status ${response.status}`;
+                    throw new Error(errorMsg);
+                }
+
+                return responseData;
+            } catch (err) {
+                console.error(`API Error [${method} ${url}]:`, err);
+                throw err;
+            }
+        }
+    </script>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,386 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Academic Dashboard{% endblock %}
+{% block page_subtitle %}Overview of scheduling resources, timetable generation state, and academic metrics{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Top Action Bar & Timetable Status Card -->
+    <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div class="flex items-start sm:items-center space-x-4">
+                <div class="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 
+                    {% if timetable_state and timetable_state.status == 'published' %}
+                        bg-emerald-50 text-emerald-600 border border-emerald-100
+                    {% elif timetable_state and timetable_state.status == 'generated' %}
+                        bg-indigo-50 text-indigo-600 border border-indigo-100
+                    {% else %}
+                        bg-amber-50 text-amber-600 border border-amber-100
+                    {% endif %}">
+                    {% if timetable_state and timetable_state.status == 'published' %}
+                        <i data-lucide="check-check" class="w-7 h-7"></i>
+                    {% elif timetable_state and timetable_state.status == 'generated' %}
+                        <i data-lucide="sparkles" class="w-7 h-7"></i>
+                    {% else %}
+                        <i data-lucide="clock" class="w-7 h-7"></i>
+                    {% endif %}
+                </div>
+                <div>
+                    <div class="flex flex-wrap items-center gap-2 mb-1">
+                        <h2 class="text-lg font-bold text-slate-800">Timetable Status:</h2>
+                        <span id="timetable-status-badge" class="px-3 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider
+                            {% if timetable_state and timetable_state.status == 'published' %}
+                                bg-emerald-100 text-emerald-800 border border-emerald-200
+                            {% elif timetable_state and timetable_state.status == 'generated' %}
+                                bg-indigo-100 text-indigo-800 border border-indigo-200
+                            {% else %}
+                                bg-amber-100 text-amber-800 border border-amber-200
+                            {% endif %}">
+                            {{ timetable_state.status|upper if timetable_state else 'DRAFT' }}
+                        </span>
+
+                        {% if timetable_state and timetable_state.generation_status %}
+                        <span class="px-2.5 py-0.5 rounded-full text-xs font-medium
+                            {% if timetable_state.generation_status == 'success' %}
+                                bg-emerald-50 text-emerald-700 border border-emerald-200
+                            {% elif timetable_state.generation_status == 'partial' %}
+                                bg-amber-50 text-amber-700 border border-amber-200
+                            {% else %}
+                                bg-rose-50 text-rose-700 border border-rose-200
+                            {% endif %}">
+                            Generation: {{ timetable_state.generation_status|capitalize }}
+                        </span>
+                        {% endif %}
+                    </div>
+                    <p class="text-sm text-slate-500">
+                        {% if timetable_state and timetable_state.last_generated %}
+                            Last generated on: <span class="font-medium text-slate-700">{{ timetable_state.last_generated }}</span>
+                        {% else %}
+                            No timetable generated yet for this session.
+                        {% endif %}
+                        {% if timetable_state and timetable_state.generation_message %}
+                            <span class="block text-xs text-slate-500 mt-0.5">{{ timetable_state.generation_message }}</span>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-wrap items-center gap-3">
+                <button type="button" id="reset-demo-btn" onclick="handleResetDemoData()" class="inline-flex items-center px-4 py-2.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-sm font-medium transition-colors shadow-xs">
+                    <i data-lucide="rotate-ccw" class="w-4 h-4 mr-2 text-slate-500"></i>
+                    Reset Demo Data
+                </button>
+
+                <button type="button" id="generate-timetable-btn" onclick="handleGenerateTimetable()" class="inline-flex items-center px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold transition-all shadow-md shadow-indigo-600/30 hover:shadow-indigo-600/40">
+                    <i data-lucide="play" id="generate-icon" class="w-4 h-4 mr-2"></i>
+                    <svg id="generate-spinner" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span id="generate-text">Generate Timetable</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Cards Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        <!-- Programmes -->
+        <a href="/programmes" class="group bg-white p-5 rounded-2xl border border-slate-200 hover:border-indigo-300 hover:shadow-md transition-all">
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Programmes</span>
+                <div class="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+                </div>
+            </div>
+            <div class="text-2xl font-bold text-slate-800">
+                {{ stats.programmes if stats and stats.programmes is defined else (programmes|length if programmes else 0) }}
+            </div>
+            <div class="text-xs text-indigo-600 font-medium mt-1 flex items-center">
+                <span>Manage curricula</span>
+                <i data-lucide="chevron-right" class="w-3.5 h-3.5 ml-0.5"></i>
+            </div>
+        </a>
+
+        <!-- Faculty -->
+        <a href="/faculty" class="group bg-white p-5 rounded-2xl border border-slate-200 hover:border-indigo-300 hover:shadow-md transition-all">
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Faculty</span>
+                <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <i data-lucide="users" class="w-5 h-5"></i>
+                </div>
+            </div>
+            <div class="text-2xl font-bold text-slate-800">
+                {{ stats.faculty if stats and stats.faculty is defined else (faculty|length if faculty else 0) }}
+            </div>
+            <div class="text-xs text-blue-600 font-medium mt-1 flex items-center">
+                <span>View professors</span>
+                <i data-lucide="chevron-right" class="w-3.5 h-3.5 ml-0.5"></i>
+            </div>
+        </a>
+
+        <!-- Rooms & Labs -->
+        <a href="/rooms" class="group bg-white p-5 rounded-2xl border border-slate-200 hover:border-indigo-300 hover:shadow-md transition-all">
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Rooms & Labs</span>
+                <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <i data-lucide="building-2" class="w-5 h-5"></i>
+                </div>
+            </div>
+            <div class="text-2xl font-bold text-slate-800">
+                {{ stats.rooms if stats and stats.rooms is defined else (rooms|length if rooms else 0) }}
+            </div>
+            <div class="text-xs text-emerald-600 font-medium mt-1 flex items-center">
+                <span>Classroom specs</span>
+                <i data-lucide="chevron-right" class="w-3.5 h-3.5 ml-0.5"></i>
+            </div>
+        </a>
+
+        <!-- Subjects -->
+        <a href="/subjects" class="group bg-white p-5 rounded-2xl border border-slate-200 hover:border-indigo-300 hover:shadow-md transition-all">
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Subjects</span>
+                <div class="w-9 h-9 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <i data-lucide="book-open" class="w-5 h-5"></i>
+                </div>
+            </div>
+            <div class="text-2xl font-bold text-slate-800">
+                {{ stats.subjects if stats and stats.subjects is defined else (subjects|length if subjects else 0) }}
+            </div>
+            <div class="text-xs text-violet-600 font-medium mt-1 flex items-center">
+                <span>Theory & practicals</span>
+                <i data-lucide="chevron-right" class="w-3.5 h-3.5 ml-0.5"></i>
+            </div>
+        </a>
+
+        <!-- Scheduled Sessions -->
+        <a href="/timetable" class="group bg-white p-5 rounded-2xl border border-slate-200 hover:border-indigo-300 hover:shadow-md transition-all">
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Scheduled</span>
+                <div class="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <i data-lucide="calendar" class="w-5 h-5"></i>
+                </div>
+            </div>
+            <div class="text-2xl font-bold text-slate-800">
+                {{ stats.scheduled_sessions if stats and stats.scheduled_sessions is defined else (scheduled_sessions|length if scheduled_sessions else 0) }}
+            </div>
+            <div class="text-xs text-amber-600 font-medium mt-1 flex items-center">
+                <span>Open timetable</span>
+                <i data-lucide="chevron-right" class="w-3.5 h-3.5 ml-0.5"></i>
+            </div>
+        </a>
+    </div>
+
+    <!-- Warnings / Unscheduled / Conflicts Alert (Shown if partial/failed or conflicts exist) -->
+    {% if timetable_state and (timetable_state.generation_status in ['partial', 'failed'] or (timetable_state.unscheduled_sessions and timetable_state.unscheduled_sessions|length > 0) or (timetable_state.conflicts and timetable_state.conflicts|length > 0)) %}
+    <div class="bg-amber-50 border border-amber-200 rounded-2xl p-6">
+        <div class="flex items-start space-x-4">
+            <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center flex-shrink-0">
+                <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+            </div>
+            <div class="flex-1">
+                <h3 class="text-base font-bold text-amber-900">Attention Required in Timetable Generation</h3>
+                <p class="text-sm text-amber-800 mt-1">
+                    Some sessions could not be scheduled automatically or have constraint clashes. Review the details below or visit the Conflicts page.
+                </p>
+
+                <!-- Unscheduled Sessions -->
+                {% if timetable_state.unscheduled_sessions and timetable_state.unscheduled_sessions|length > 0 %}
+                <div class="mt-4">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-amber-900 mb-2">Unscheduled Sessions ({{ timetable_state.unscheduled_sessions|length }})</h4>
+                    <div class="bg-white rounded-xl border border-amber-200 overflow-hidden shadow-xs">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-amber-100/60 text-amber-900 font-semibold border-b border-amber-200">
+                                    <tr>
+                                        <th class="px-4 py-2.5">Subject</th>
+                                        <th class="px-4 py-2.5">Type</th>
+                                        <th class="px-4 py-2.5">Section / Batch</th>
+                                        <th class="px-4 py-2.5">Reason / Constraint</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-amber-100 text-slate-700">
+                                    {% for session in timetable_state.unscheduled_sessions %}
+                                    <tr class="hover:bg-amber-50/50">
+                                        <td class="px-4 py-2.5 font-medium text-slate-900">{{ session.subject_name or session.subject_code or session.subject_id }}</td>
+                                        <td class="px-4 py-2.5 capitalize">{{ session.session_type or 'theory' }}</td>
+                                        <td class="px-4 py-2.5">{{ session.section_name or session.batch_name or '-' }}</td>
+                                        <td class="px-4 py-2.5 text-rose-600 font-medium">{{ session.reason or 'No suitable slot or room found' }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Conflicts list snippet -->
+                {% if timetable_state.conflicts and timetable_state.conflicts|length > 0 %}
+                <div class="mt-4">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-amber-900 mb-2">Active Conflicts ({{ timetable_state.conflicts|length }})</h4>
+                    <div class="space-y-2">
+                        {% for conflict in timetable_state.conflicts[:3] %}
+                        <div class="flex items-center justify-between p-3 bg-white rounded-xl border border-amber-200 text-xs">
+                            <div class="flex items-center space-x-2">
+                                <span class="w-2 h-2 rounded-full bg-rose-500 flex-shrink-0"></span>
+                                <span class="font-semibold text-slate-800">{{ conflict.type or 'Schedule Clash' }}:</span>
+                                <span class="text-slate-600">{{ conflict.description or conflict.message }}</span>
+                            </div>
+                            <a href="/conflicts" class="text-indigo-600 hover:text-indigo-800 font-semibold">Details &rarr;</a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% if timetable_state.conflicts|length > 3 %}
+                    <div class="mt-2 text-right">
+                        <a href="/conflicts" class="text-xs font-semibold text-amber-900 hover:underline">View all {{ timetable_state.conflicts|length }} conflicts &rarr;</a>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Quick Navigation Links Grid -->
+    <div>
+        <h3 class="text-sm font-bold text-slate-700 uppercase tracking-wider mb-4">Quick Navigation & Management</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <a href="/timetable" class="flex items-start p-5 bg-white rounded-2xl border border-slate-200 hover:border-indigo-300 hover:shadow-md transition-all group">
+                <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mr-4 flex-shrink-0 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                    <i data-lucide="calendar" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold text-slate-800 group-hover:text-indigo-600 transition-colors">Interactive Timetable Grid</h4>
+                    <p class="text-xs text-slate-500 mt-1 leading-relaxed">View timetable by programme, faculty, or room. Drag, lock, or manually adjust slots.</p>
+                </div>
+            </a>
+
+            <a href="/programmes" class="flex items-start p-5 bg-white rounded-2xl border border-slate-200 hover:border-indigo-300 hover:shadow-md transition-all group">
+                <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mr-4 flex-shrink-0 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                    <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold text-slate-800 group-hover:text-indigo-600 transition-colors">Programmes & Batches</h4>
+                    <p class="text-xs text-slate-500 mt-1 leading-relaxed">Configure degrees, semesters, sections, and practical lab subgroups.</p>
+                </div>
+            </a>
+
+            <a href="/faculty" class="flex items-start p-5 bg-white rounded-2xl border border-slate-200 hover:border-indigo-300 hover:shadow-md transition-all group">
+                <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mr-4 flex-shrink-0 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                    <i data-lucide="users" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold text-slate-800 group-hover:text-indigo-600 transition-colors">Faculty Availability</h4>
+                    <p class="text-xs text-slate-500 mt-1 leading-relaxed">Manage teaching limits, preferred time bands, and unavailable leaves.</p>
+                </div>
+            </a>
+
+            <a href="/rooms" class="flex items-start p-5 bg-white rounded-2xl border border-slate-200 hover:border-indigo-300 hover:shadow-md transition-all group">
+                <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center mr-4 flex-shrink-0 group-hover:bg-purple-600 group-hover:text-white transition-colors">
+                    <i data-lucide="building-2" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold text-slate-800 group-hover:text-indigo-600 transition-colors">Classrooms & Laboratories</h4>
+                    <p class="text-xs text-slate-500 mt-1 leading-relaxed">Manage room seating capacities, lab equipment types, and building locations.</p>
+                </div>
+            </a>
+
+            <a href="/conflicts" class="flex items-start p-5 bg-white rounded-2xl border border-slate-200 hover:border-indigo-300 hover:shadow-md transition-all group">
+                <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center mr-4 flex-shrink-0 group-hover:bg-rose-600 group-hover:text-white transition-colors">
+                    <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold text-slate-800 group-hover:text-indigo-600 transition-colors">Clash Audit & Validation</h4>
+                    <p class="text-xs text-slate-500 mt-1 leading-relaxed">Run real-time constraint validation for double-bookings and room capacity.</p>
+                </div>
+            </a>
+
+            <a href="/export" class="flex items-start p-5 bg-white rounded-2xl border border-slate-200 hover:border-indigo-300 hover:shadow-md transition-all group">
+                <div class="w-10 h-10 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center mr-4 flex-shrink-0 group-hover:bg-sky-600 group-hover:text-white transition-colors">
+                    <i data-lucide="share-2" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold text-slate-800 group-hover:text-indigo-600 transition-colors">Publish & Export</h4>
+                    <p class="text-xs text-slate-500 mt-1 leading-relaxed">Download CSV spreadsheets, print master timetables, or publish live to campus.</p>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    async function handleGenerateTimetable() {
+        const btn = document.getElementById('generate-timetable-btn');
+        const icon = document.getElementById('generate-icon');
+        const spinner = document.getElementById('generate-spinner');
+        const text = document.getElementById('generate-text');
+
+        btn.disabled = true;
+        btn.classList.add('opacity-80', 'cursor-not-allowed');
+        icon.classList.add('hidden');
+        spinner.classList.remove('hidden');
+        text.textContent = 'Generating Timetable...';
+
+        try {
+            // Support both /api/generate and /api/timetable/generate
+            let res;
+            try {
+                res = await apiCall('/api/generate', 'POST', {});
+            } catch (e) {
+                res = await apiCall('/api/timetable/generate', 'POST', {});
+            }
+
+            showToast(res.message || 'Timetable generated successfully!', 'success');
+            setTimeout(() => {
+                window.location.reload();
+            }, 1200);
+        } catch (err) {
+            showToast(err.message || 'Failed to generate timetable', 'error');
+            btn.disabled = false;
+            btn.classList.remove('opacity-80', 'cursor-not-allowed');
+            icon.classList.remove('hidden');
+            spinner.classList.add('hidden');
+            text.textContent = 'Generate Timetable';
+        }
+    }
+
+    async function handleResetDemoData() {
+        const confirmed = await confirmAction(
+            'This will reset all courses, faculty, rooms, and schedule entries to the default NFSU School of Cyber Security sample data. Any custom modifications will be overwritten.',
+            'Reset to NFSU Demo Data?'
+        );
+
+        if (!confirmed) return;
+
+        const btn = document.getElementById('reset-demo-btn');
+        btn.disabled = true;
+
+        try {
+            let res;
+            try {
+                res = await apiCall('/api/demo-data/reset', 'POST', {});
+            } catch (e) {
+                try {
+                    res = await apiCall('/api/reset-demo', 'POST', {});
+                } catch (e2) {
+                    res = await apiCall('/api/reset', 'POST', {});
+                }
+            }
+
+            showToast(res.message || 'Demo data loaded successfully!', 'success');
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        } catch (err) {
+            showToast(err.message || 'Failed to reset demo data', 'error');
+            btn.disabled = false;
+        }
+    }
+</script>
+{% endblock %}

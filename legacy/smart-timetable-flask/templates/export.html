@@ -1,0 +1,269 @@
+{% extends "base.html" %}
+
+{% block title %}Publish & Export{% endblock %}
+{% block page_title %}Publish & Export Timetable{% endblock %}
+{% block page_subtitle %}Finalize academic schedules, publish live to student portals, and export printable notices or CSV data{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Publication Status & Publish/Unpublish Card -->
+    <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs no-print">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div class="flex items-start sm:items-center space-x-4">
+                <div class="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 
+                    {% if timetable_state and timetable_state.status == 'published' %}
+                        bg-emerald-50 text-emerald-600 border border-emerald-100
+                    {% elif timetable_state and timetable_state.status == 'generated' %}
+                        bg-indigo-50 text-indigo-600 border border-indigo-100
+                    {% else %}
+                        bg-amber-50 text-amber-600 border border-amber-100
+                    {% endif %}">
+                    {% if timetable_state and timetable_state.status == 'published' %}
+                        <i data-lucide="globe" class="w-7 h-7"></i>
+                    {% else %}
+                        <i data-lucide="file-text" class="w-7 h-7"></i>
+                    {% endif %}
+                </div>
+                <div>
+                    <div class="flex flex-wrap items-center gap-2 mb-1">
+                        <h2 class="text-lg font-bold text-slate-800">Publication State:</h2>
+                        <span id="pub-status-badge" class="px-3 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider
+                            {% if timetable_state and timetable_state.status == 'published' %}
+                                bg-emerald-100 text-emerald-800 border border-emerald-200
+                            {% elif timetable_state and timetable_state.status == 'generated' %}
+                                bg-indigo-100 text-indigo-800 border border-indigo-200
+                            {% else %}
+                                bg-amber-100 text-amber-800 border border-amber-200
+                            {% endif %}">
+                            {{ timetable_state.status|upper if timetable_state else 'DRAFT' }}
+                        </span>
+                    </div>
+                    <p class="text-sm text-slate-500">
+                        {% if timetable_state and timetable_state.status == 'published' %}
+                            <span class="text-emerald-700 font-medium">This timetable is officially published</span> and visible to university students and faculty members.
+                        {% else %}
+                            This timetable is currently in <span class="font-medium text-slate-700">internal draft / preview mode</span>. Publish when ready to make it campus-official.
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-wrap items-center gap-3">
+                {% if timetable_state and timetable_state.status == 'published' %}
+                <button type="button" onclick="handleUnpublish()" id="unpublish-btn" class="inline-flex items-center px-4 py-2.5 rounded-xl border border-rose-300 bg-rose-50 hover:bg-rose-100 text-rose-700 text-sm font-semibold transition-colors">
+                    <i data-lucide="eye-off" class="w-4 h-4 mr-2"></i>
+                    Revert to Draft
+                </button>
+                {% else %}
+                <button type="button" onclick="handlePublish()" id="publish-btn" class="inline-flex items-center px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold shadow-md shadow-emerald-600/30 transition-all">
+                    <i data-lucide="globe" class="w-4 h-4 mr-2"></i>
+                    Publish Timetable Live
+                </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Warnings Banner (If Timetable is Incomplete or has Conflicts) -->
+    {% if timetable_state and ((timetable_state.conflicts and timetable_state.conflicts|length > 0) or (timetable_state.unscheduled_sessions and timetable_state.unscheduled_sessions|length > 0) or timetable_state.status == 'draft') %}
+    <div class="bg-amber-50 border border-amber-200 rounded-2xl p-5 no-print">
+        <div class="flex items-start space-x-3.5">
+            <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center flex-shrink-0">
+                <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+            </div>
+            <div>
+                <h3 class="text-sm font-bold text-amber-900">Pre-Publication Advisory</h3>
+                <ul class="text-xs text-amber-800 mt-1 space-y-1 list-disc list-inside">
+                    {% if timetable_state.conflicts and timetable_state.conflicts|length > 0 %}
+                    <li>There are <strong>{{ timetable_state.conflicts|length }} active schedule conflicts</strong> detected. Review on the Conflicts page before publishing.</li>
+                    {% endif %}
+                    {% if timetable_state.unscheduled_sessions and timetable_state.unscheduled_sessions|length > 0 %}
+                    <li><strong>{{ timetable_state.unscheduled_sessions|length }} sessions remain unscheduled</strong> due to room capacity or period limitations.</li>
+                    {% endif %}
+                    {% if timetable_state.status == 'draft' %}
+                    <li>Timetable is still in draft format. Once published, official notifications may be triggered.</li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Export & Distribution Channels Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 no-print">
+        <!-- CSV Spreadsheet Export -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs flex flex-col justify-between">
+            <div>
+                <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-4">
+                    <i data-lucide="file-spreadsheet" class="w-6 h-6"></i>
+                </div>
+                <h3 class="text-base font-bold text-slate-800 mb-1">Export to CSV Spreadsheet</h3>
+                <p class="text-xs text-slate-500 leading-relaxed">
+                    Download complete scheduling records including Course Code, Subject Title, Section, Batch, Assigned Professor, Room, Day, and Time Range formatted for Excel and SIS databases.
+                </p>
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-slate-100">
+                <button type="button" onclick="handleExportCSV()" class="w-full inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow-xs transition-colors">
+                    <i data-lucide="download" class="w-4 h-4 mr-2"></i>
+                    Download Master CSV File
+                </button>
+            </div>
+        </div>
+
+        <!-- Official Print Timetable -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs flex flex-col justify-between">
+            <div>
+                <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-4">
+                    <i data-lucide="printer" class="w-6 h-6"></i>
+                </div>
+                <h3 class="text-base font-bold text-slate-800 mb-1">Print / Save as PDF</h3>
+                <p class="text-xs text-slate-500 leading-relaxed">
+                    Generate an official university-formatted print view with standard institution letterhead, department title, clean grid layout, and signature lines for notice board publishing.
+                </p>
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-slate-100">
+                <button type="button" onclick="window.print()" class="w-full inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-xs transition-colors">
+                    <i data-lucide="printer" class="w-4 h-4 mr-2"></i>
+                    Print Official Timetables
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- On-Screen Schedule Summary Preview -->
+    <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs no-print">
+        <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider mb-4">Academic Allocation Summary</h3>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+            <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                <div class="text-2xl font-bold text-slate-800">{{ scheduled_sessions|length if scheduled_sessions else 0 }}</div>
+                <div class="text-xs font-medium text-slate-500 mt-0.5">Total Scheduled Slots</div>
+            </div>
+            <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                <div class="text-2xl font-bold text-indigo-600">{{ faculty|length if faculty else 0 }}</div>
+                <div class="text-xs font-medium text-slate-500 mt-0.5">Faculty Deployed</div>
+            </div>
+            <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                <div class="text-2xl font-bold text-emerald-600">{{ rooms|length if rooms else 0 }}</div>
+                <div class="text-xs font-medium text-slate-500 mt-0.5">Rooms Utilized</div>
+            </div>
+            <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                <div class="text-2xl font-bold text-purple-600">{{ subjects|length if subjects else 0 }}</div>
+                <div class="text-xs font-medium text-slate-500 mt-0.5">Active Subjects</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PRINT-OPTIMIZED TIMETABLE VIEW (Shown exclusively when printing) -->
+    <div class="print-only">
+        <div class="text-center pb-6 border-b-2 border-slate-800 mb-6">
+            <h1 class="text-2xl font-extrabold uppercase tracking-wide text-slate-900">
+                {{ settings.name if settings and settings.name else 'National Forensic Sciences University' }}
+            </h1>
+            <h2 class="text-base font-bold text-slate-700 mt-1">
+                {{ settings.department if settings and settings.department else 'School of Cyber Security & Digital Forensics' }}
+            </h2>
+            <p class="text-xs text-slate-600 mt-1">
+                Official Master Academic Timetable &bull; Academic Year 2026-27 &bull; Published: {{ timetable_state.last_generated if timetable_state and timetable_state.last_generated else 'Current Session' }}
+            </p>
+        </div>
+
+        <!-- Print Table of Scheduled Sessions -->
+        {% if scheduled_sessions and scheduled_sessions|length > 0 %}
+        <table class="w-full text-left text-xs border border-slate-800 border-collapse mb-8">
+            <thead>
+                <tr class="bg-slate-200 text-slate-900 border-b border-slate-800 font-bold uppercase text-[11px]">
+                    <th class="p-2 border border-slate-800">Day</th>
+                    <th class="p-2 border border-slate-800">Time</th>
+                    <th class="p-2 border border-slate-800">Subject Code & Name</th>
+                    <th class="p-2 border border-slate-800">Type</th>
+                    <th class="p-2 border border-slate-800">Instructor</th>
+                    <th class="p-2 border border-slate-800">Room / Lab</th>
+                    <th class="p-2 border border-slate-800">Cohort / Batch</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in scheduled_sessions %}
+                <tr class="border-b border-slate-400">
+                    <td class="p-2 border border-slate-400 font-semibold">{{ s.day }}</td>
+                    <td class="p-2 border border-slate-400 whitespace-nowrap">{{ s.start_time }} - {{ s.end_time }}</td>
+                    <td class="p-2 border border-slate-400 font-bold">
+                        {{ s.subject_code or s.subject_id }} - {{ s.subject_name or '' }}
+                    </td>
+                    <td class="p-2 border border-slate-400 uppercase text-[10px]">{{ s.session_type }}</td>
+                    <td class="p-2 border border-slate-400">{{ s.faculty_name or s.faculty_id }}</td>
+                    <td class="p-2 border border-slate-400">{{ s.room_name or s.room_id }}</td>
+                    <td class="p-2 border border-slate-400">
+                        {{ s.section_name or '' }} {% if s.batch_name %}({{ s.batch_name }}){% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="text-center py-12 text-sm italic text-slate-600">No scheduled sessions to print.</p>
+        {% endif %}
+
+        <!-- Institutional Sign-Off Section -->
+        <div class="mt-16 pt-8 flex justify-between text-xs font-semibold text-slate-800">
+            <div class="text-center">
+                <div class="w-48 border-t border-slate-800 mb-1"></div>
+                <span>Timetable In-Charge</span>
+            </div>
+            <div class="text-center">
+                <div class="w-48 border-t border-slate-800 mb-1"></div>
+                <span>Dean / Head of School</span>
+            </div>
+            <div class="text-center">
+                <div class="w-48 border-t border-slate-800 mb-1"></div>
+                <span>Registrar / Controller of Exams</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    async function handlePublish() {
+        const ok = await confirmAction('Publishing will make this academic timetable official across all university portals. Confirm publication?', 'Publish Timetable');
+        if (!ok) return;
+
+        const btn = document.getElementById('publish-btn');
+        if (btn) btn.disabled = true;
+
+        try {
+            const res = await apiCall('/api/timetable/publish', 'POST', {});
+            showToast(res.message || 'Timetable published live successfully!', 'success');
+            setTimeout(() => window.location.reload(), 800);
+        } catch (err) {
+            showToast(err.message || 'Failed to publish timetable', 'error');
+            if (btn) btn.disabled = false;
+        }
+    }
+
+    async function handleUnpublish() {
+        const ok = await confirmAction('Reverting to draft will retract the live timetable. Are you sure?', 'Unpublish Timetable');
+        if (!ok) return;
+
+        const btn = document.getElementById('unpublish-btn');
+        if (btn) btn.disabled = true;
+
+        try {
+            const res = await apiCall('/api/timetable/unpublish', 'POST', {});
+            showToast(res.message || 'Timetable returned to draft status.', 'info');
+            setTimeout(() => window.location.reload(), 800);
+        } catch (err) {
+            showToast(err.message || 'Failed to revert timetable status', 'error');
+            if (btn) btn.disabled = false;
+        }
+    }
+
+    function handleExportCSV() {
+        // Direct browser download to the CSV endpoint
+        window.location.href = '/api/timetable/export-csv';
+    }
+</script>
+{% endblock %}

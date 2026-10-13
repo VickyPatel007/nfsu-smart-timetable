@@ -1,0 +1,1132 @@
+{
+  "settings": {
+    "name": "National Forensic Sciences University",
+    "department": "School of Cyber Security & Digital Forensics",
+    "working_days": [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday"
+    ],
+    "start_time": "09:00",
+    "end_time": "17:00",
+    "period_duration": 60,
+    "breaks": [
+      {
+        "name": "Lunch",
+        "start": "13:00",
+        "end": "14:00"
+      }
+    ]
+  },
+  "rooms": [
+    {
+      "id": "ca8d6fe6-9989-5de2-94aa-9a544f976de7",
+      "name": "CR-101",
+      "capacity": 60,
+      "room_type": "classroom",
+      "lab_type": "",
+      "available_days": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday"
+      ]
+    },
+    {
+      "id": "452c2349-afe4-5e88-b72f-e6aba60d0e1e",
+      "name": "CR-102",
+      "capacity": 40,
+      "room_type": "classroom",
+      "lab_type": "",
+      "available_days": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday"
+      ]
+    },
+    {
+      "id": "0e91cd1d-5f68-54f4-b598-44b57ebe7a23",
+      "name": "CR-103",
+      "capacity": 40,
+      "room_type": "classroom",
+      "lab_type": "",
+      "available_days": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday"
+      ]
+    },
+    {
+      "id": "4078d28a-4ad5-5e1e-a61b-955278176b24",
+      "name": "CR-104",
+      "capacity": 30,
+      "room_type": "classroom",
+      "lab_type": "",
+      "available_days": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday"
+      ]
+    },
+    {
+      "id": "75062769-d5f5-5223-862f-ec9ce457952e",
+      "name": "CS Lab 1",
+      "capacity": 25,
+      "room_type": "laboratory",
+      "lab_type": "CS Lab",
+      "available_days": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday"
+      ]
+    },
+    {
+      "id": "b95ac00a-b642-5607-96e6-22dda21d15ee",
+      "name": "CS Lab 2",
+      "capacity": 25,
+      "room_type": "laboratory",
+      "lab_type": "CS Lab",
+      "available_days": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday"
+      ]
+    },
+    {
+      "id": "fbbbd532-feaf-5636-bc16-e35074c311b8",
+      "name": "Network Lab",
+      "capacity": 20,
+      "room_type": "laboratory",
+      "lab_type": "Network Lab",
+      "available_days": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday"
+      ]
+    },
+    {
+      "id": "3fe176b6-d14c-5707-9e41-c1cf7a7f5cb8",
+      "name": "Digital Forensics Lab",
+      "capacity": 20,
+      "room_type": "laboratory",
+      "lab_type": "Forensics Lab",
+      "available_days": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday"
+      ]
+    }
+  ],
+  "programmes": [
+    {
+      "id": "5ed2bd13-74fd-5a24-976b-fce88dbab108",
+      "name": "B.Tech-M.Tech Computer Science & Engineering (Cyber Security)",
+      "code": "BTECH-MTECH-CSE-CS",
+      "duration_years": 5,
+      "semesters": [
+        {
+          "id": "68cf0d64-fe92-59e0-bdec-89126c7f099a",
+          "programme_id": "5ed2bd13-74fd-5a24-976b-fce88dbab108",
+          "number": 1,
+          "sections": [
+            {
+              "id": "207056aa-f955-5369-9128-3c127512654b",
+              "semester_id": "68cf0d64-fe92-59e0-bdec-89126c7f099a",
+              "programme_id": "5ed2bd13-74fd-5a24-976b-fce88dbab108",
+              "name": "A",
+              "student_strength": 40,
+              "practical_batches": [
+                {
+                  "id": "99dd08f9-3c5b-55a8-aa76-20839600e0ae",
+                  "name": "B1",
+                  "strength": 20
+                },
+                {
+                  "id": "65c7f31e-6980-5b67-a468-3396596dc88f",
+                  "name": "B2",
+                  "strength": 20
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cd5ceef5-74fa-5ab6-9db8-d9350a265f64",
+      "name": "M.Tech Cyber Security",
+      "code": "MTECH-CS",
+      "duration_years": 2,
+      "semesters": [
+        {
+          "id": "38beb7ae-51c9-564b-b9c6-27312769f791",
+          "programme_id": "cd5ceef5-74fa-5ab6-9db8-d9350a265f64",
+          "number": 1,
+          "sections": [
+            {
+              "id": "6a29463f-8ca5-5c51-acd7-f3f03f48c7c9",
+              "semester_id": "38beb7ae-51c9-564b-b9c6-27312769f791",
+              "programme_id": "cd5ceef5-74fa-5ab6-9db8-d9350a265f64",
+              "name": "A",
+              "student_strength": 30,
+              "practical_batches": [
+                {
+                  "id": "a9918982-f42f-599c-8e9f-806dfda7f51a",
+                  "name": "B1",
+                  "strength": 15
+                },
+                {
+                  "id": "1088fcb3-1e2b-5a38-a025-d99a9865d71b",
+                  "name": "B2",
+                  "strength": 15
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "d2de755c-1c62-561b-8b74-fd15dfde0505",
+      "name": "M.Tech Artificial Intelligence & Data Science",
+      "code": "MTECH-AIDS",
+      "duration_years": 2,
+      "semesters": [
+        {
+          "id": "1c091df1-1888-5db1-af40-e8de65f72bea",
+          "programme_id": "d2de755c-1c62-561b-8b74-fd15dfde0505",
+          "number": 1,
+          "sections": [
+            {
+              "id": "1913d598-8d46-5248-bd52-9158b1b01992",
+              "semester_id": "1c091df1-1888-5db1-af40-e8de65f72bea",
+              "programme_id": "d2de755c-1c62-561b-8b74-fd15dfde0505",
+              "name": "A",
+              "student_strength": 30,
+              "practical_batches": [
+                {
+                  "id": "472c1fd4-d55a-583b-a797-ae5014ace414",
+                  "name": "B1",
+                  "strength": 15
+                },
+                {
+                  "id": "c884cd3a-5a04-5ae1-867c-16d118b50e89",
+                  "name": "B2",
+                  "strength": 15
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "0e476761-8ed2-5550-acb9-b1bc817151b6",
+      "name": "M.Sc. Cyber Security",
+      "code": "MSC-CS",
+      "duration_years": 2,
+      "semesters": [
+        {
+          "id": "e4ad556b-18fd-5f94-94d2-38dac692b692",
+          "programme_id": "0e476761-8ed2-5550-acb9-b1bc817151b6",
+          "number": 1,
+          "sections": [
+            {
+              "id": "5903da8e-a25a-512b-8e98-f23abe23b158",
+              "semester_id": "e4ad556b-18fd-5f94-94d2-38dac692b692",
+              "programme_id": "0e476761-8ed2-5550-acb9-b1bc817151b6",
+              "name": "A",
+              "student_strength": 25,
+              "practical_batches": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "88dce6f1-acc3-5ced-b542-041261f121dc",
+      "name": "M.Sc. Digital Forensics & Information Security",
+      "code": "MSC-DFIS",
+      "duration_years": 2,
+      "semesters": [
+        {
+          "id": "eb0ab0e4-1666-5208-91c9-1500b4de34b3",
+          "programme_id": "88dce6f1-acc3-5ced-b542-041261f121dc",
+          "number": 1,
+          "sections": [
+            {
+              "id": "11c9eca3-363d-5c6c-b39e-79a7991ca5af",
+              "semester_id": "eb0ab0e4-1666-5208-91c9-1500b4de34b3",
+              "programme_id": "88dce6f1-acc3-5ced-b542-041261f121dc",
+              "name": "A",
+              "student_strength": 25,
+              "practical_batches": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "faculty": [
+    {
+      "id": "01adb332-9e2a-5fc0-8260-115422103562",
+      "name": "Dr. Sharma",
+      "employee_id": "NFSU-FAC-001",
+      "available_days": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday"
+      ],
+      "available_time_start": "09:00",
+      "available_time_end": "17:00",
+      "unavailable_slots": [],
+      "max_periods_per_day": 6,
+      "preferred_slots": [
+        {
+          "day": "Monday",
+          "start": "09:00",
+          "end": "12:00"
+        },
+        {
+          "day": "Tuesday",
+          "start": "09:00",
+          "end": "12:00"
+        },
+        {
+          "day": "Wednesday",
+          "start": "09:00",
+          "end": "12:00"
+        },
+        {
+          "day": "Thursday",
+          "start": "09:00",
+          "end": "12:00"
+        },
+        {
+          "day": "Friday",
+          "start": "09:00",
+          "end": "12:00"
+        }
+      ]
+    },
+    {
+      "id": "3339a452-fee1-5331-bff4-236e5d979ade",
+      "name": "Dr. Patel",
+      "employee_id": "NFSU-FAC-002",
+      "available_days": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday"
+      ],
+      "available_time_start": "09:00",
+      "available_time_end": "17:00",
+      "unavailable_slots": [],
+      "max_periods_per_day": 6,
+      "preferred_slots": []
+    },
+    {
+      "id": "234711f1-ba00-5d27-8c68-7fb379310688",
+      "name": "Prof. Singh",
+      "employee_id": "NFSU-FAC-003",
+      "available_days": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday"
+      ],
+      "available_time_start": "09:00",
+      "available_time_end": "17:00",
+      "unavailable_slots": [],
+      "max_periods_per_day": 6,
+      "preferred_slots": []
+    },
+    {
+      "id": "ee814ac2-fdb2-530a-9af6-d86dda31ded1",
+      "name": "Dr. Gupta",
+      "employee_id": "NFSU-FAC-004",
+      "available_days": [
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday"
+      ],
+      "available_time_start": "09:00",
+      "available_time_end": "17:00",
+      "unavailable_slots": [],
+      "max_periods_per_day": 6,
+      "preferred_slots": []
+    },
+    {
+      "id": "f058ad97-28ef-5ae8-b07e-94dd8b4e59b3",
+      "name": "Prof. Mehta",
+      "employee_id": "NFSU-FAC-005",
+      "available_days": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday"
+      ],
+      "available_time_start": "09:00",
+      "available_time_end": "17:00",
+      "unavailable_slots": [],
+      "max_periods_per_day": 6,
+      "preferred_slots": []
+    },
+    {
+      "id": "bd5b0af1-fd06-5b40-818e-2108d16aea85",
+      "name": "Dr. Verma",
+      "employee_id": "NFSU-FAC-006",
+      "available_days": [
+        "Monday",
+        "Wednesday",
+        "Friday"
+      ],
+      "available_time_start": "09:00",
+      "available_time_end": "17:00",
+      "unavailable_slots": [],
+      "max_periods_per_day": 6,
+      "preferred_slots": []
+    }
+  ],
+  "subjects": [
+    {
+      "id": "d87e6b18-61a7-5e0f-b200-696f7e5df815",
+      "name": "Data Structures",
+      "code": "CS101",
+      "section_id": "207056aa-f955-5369-9128-3c127512654b",
+      "programme_id": "5ed2bd13-74fd-5a24-976b-fce88dbab108",
+      "semester_id": "68cf0d64-fe92-59e0-bdec-89126c7f099a",
+      "faculty_id": "01adb332-9e2a-5fc0-8260-115422103562",
+      "theory_periods_per_week": 3,
+      "practical_sessions_per_week": 1,
+      "practical_consecutive_periods": 2,
+      "required_lab_type": "CS Lab",
+      "is_for_batches": true
+    },
+    {
+      "id": "27b3914f-be8b-5dc8-b99f-679f978e78bb",
+      "name": "Digital Logic",
+      "code": "CS102",
+      "section_id": "207056aa-f955-5369-9128-3c127512654b",
+      "programme_id": "5ed2bd13-74fd-5a24-976b-fce88dbab108",
+      "semester_id": "68cf0d64-fe92-59e0-bdec-89126c7f099a",
+      "faculty_id": "3339a452-fee1-5331-bff4-236e5d979ade",
+      "theory_periods_per_week": 3,
+      "practical_sessions_per_week": 0,
+      "practical_consecutive_periods": 2,
+      "required_lab_type": "",
+      "is_for_batches": false
+    },
+    {
+      "id": "214ece15-d0f1-59cd-901a-23ada6f9f652",
+      "name": "Mathematics-I",
+      "code": "MA101",
+      "section_id": "207056aa-f955-5369-9128-3c127512654b",
+      "programme_id": "5ed2bd13-74fd-5a24-976b-fce88dbab108",
+      "semester_id": "68cf0d64-fe92-59e0-bdec-89126c7f099a",
+      "faculty_id": "234711f1-ba00-5d27-8c68-7fb379310688",
+      "theory_periods_per_week": 4,
+      "practical_sessions_per_week": 0,
+      "practical_consecutive_periods": 2,
+      "required_lab_type": "",
+      "is_for_batches": false
+    },
+    {
+      "id": "407fcc4c-c1b4-5181-8b1d-6f950eae84ba",
+      "name": "Communication Skills",
+      "code": "HS101",
+      "section_id": "207056aa-f955-5369-9128-3c127512654b",
+      "programme_id": "5ed2bd13-74fd-5a24-976b-fce88dbab108",
+      "semester_id": "68cf0d64-fe92-59e0-bdec-89126c7f099a",
+      "faculty_id": "ee814ac2-fdb2-530a-9af6-d86dda31ded1",
+      "theory_periods_per_week": 2,
+      "practical_sessions_per_week": 0,
+      "practical_consecutive_periods": 2,
+      "required_lab_type": "",
+      "is_for_batches": false
+    },
+    {
+      "id": "1e0837ca-ca06-5c62-8eca-b11e4715408f",
+      "name": "Introduction to Cyber Security",
+      "code": "CS103",
+      "section_id": "207056aa-f955-5369-9128-3c127512654b",
+      "programme_id": "5ed2bd13-74fd-5a24-976b-fce88dbab108",
+      "semester_id": "68cf0d64-fe92-59e0-bdec-89126c7f099a",
+      "faculty_id": "f058ad97-28ef-5ae8-b07e-94dd8b4e59b3",
+      "theory_periods_per_week": 3,
+      "practical_sessions_per_week": 1,
+      "practical_consecutive_periods": 2,
+      "required_lab_type": "CS Lab",
+      "is_for_batches": true
+    },
+    {
+      "id": "af1d579e-cec5-5097-b5a4-8f739553380c",
+      "name": "Advanced Algorithms",
+      "code": "CS501",
+      "section_id": "6a29463f-8ca5-5c51-acd7-f3f03f48c7c9",
+      "programme_id": "cd5ceef5-74fa-5ab6-9db8-d9350a265f64",
+      "semester_id": "38beb7ae-51c9-564b-b9c6-27312769f791",
+      "faculty_id": "01adb332-9e2a-5fc0-8260-115422103562",
+      "theory_periods_per_week": 3,
+      "practical_sessions_per_week": 0,
+      "practical_consecutive_periods": 2,
+      "required_lab_type": "",
+      "is_for_batches": false
+    },
+    {
+      "id": "7fb63b13-5c86-50a9-8113-e7889126450b",
+      "name": "Machine Learning",
+      "code": "CS502",
+      "section_id": "6a29463f-8ca5-5c51-acd7-f3f03f48c7c9",
+      "programme_id": "cd5ceef5-74fa-5ab6-9db8-d9350a265f64",
+      "semester_id": "38beb7ae-51c9-564b-b9c6-27312769f791",
+      "faculty_id": "bd5b0af1-fd06-5b40-818e-2108d16aea85",
+      "theory_periods_per_week": 3,
+      "practical_sessions_per_week": 1,
+      "practical_consecutive_periods": 2,
+      "required_lab_type": "CS Lab",
+      "is_for_batches": true
+    },
+    {
+      "id": "9c40bbc0-c5a1-5f84-a23d-ab9ad067f8f4",
+      "name": "Research Methodology",
+      "code": "CS503",
+      "section_id": "6a29463f-8ca5-5c51-acd7-f3f03f48c7c9",
+      "programme_id": "cd5ceef5-74fa-5ab6-9db8-d9350a265f64",
+      "semester_id": "38beb7ae-51c9-564b-b9c6-27312769f791",
+      "faculty_id": "234711f1-ba00-5d27-8c68-7fb379310688",
+      "theory_periods_per_week": 2,
+      "practical_sessions_per_week": 0,
+      "practical_consecutive_periods": 2,
+      "required_lab_type": "",
+      "is_for_batches": false
+    }
+  ],
+  "fixed_sessions": [
+    {
+      "id": "2483ab1c-dcde-5c52-9c23-262fa349a327",
+      "subject_id": "214ece15-d0f1-59cd-901a-23ada6f9f652",
+      "faculty_id": "234711f1-ba00-5d27-8c68-7fb379310688",
+      "section_id": "207056aa-f955-5369-9128-3c127512654b",
+      "room_id": "ca8d6fe6-9989-5de2-94aa-9a544f976de7",
+      "day": "Monday",
+      "start_time": "09:00",
+      "end_time": "10:00",
+      "session_type": "theory",
+      "batch_id": ""
+    }
+  ],
+  "scheduled_sessions": [
+    {
+      "id": "2483ab1c-dcde-5c52-9c23-262fa349a327",
+      "subject_id": "214ece15-d0f1-59cd-901a-23ada6f9f652",
+      "faculty_id": "234711f1-ba00-5d27-8c68-7fb379310688",
+      "section_id": "207056aa-f955-5369-9128-3c127512654b",
+      "programme_id": "",
+      "semester_id": "",
+      "room_id": "ca8d6fe6-9989-5de2-94aa-9a544f976de7",
+      "room_name": "CR-101",
+      "subject_name": "Mathematics-I",
+      "faculty_name": "Prof. Singh",
+      "day": "Monday",
+      "start_time": "09:00",
+      "end_time": "10:00",
+      "session_type": "theory",
+      "batch_id": "",
+      "batch_name": "",
+      "is_locked": false,
+      "is_fixed": true
+    },
+    {
+      "id": "80e3f3e7-c7bb-47c9-8246-bdb6de42e9c3",
+      "subject_id": "7fb63b13-5c86-50a9-8113-e7889126450b",
+      "faculty_id": "bd5b0af1-fd06-5b40-818e-2108d16aea85",
+      "section_id": "6a29463f-8ca5-5c51-acd7-f3f03f48c7c9",
+      "programme_id": "cd5ceef5-74fa-5ab6-9db8-d9350a265f64",
+      "semester_id": "38beb7ae-51c9-564b-b9c6-27312769f791",
+      "room_id": "75062769-d5f5-5223-862f-ec9ce457952e",
+      "room_name": "CS Lab 1",
+      "subject_name": "Machine Learning",
+      "faculty_name": "Dr. Verma",
+      "day": "Monday",
+      "start_time": "09:00",
+      "end_time": "11:00",
+      "session_type": "practical",
+      "batch_id": "a9918982-f42f-599c-8e9f-806dfda7f51a",
+      "batch_name": "B1",
+      "is_locked": false,
+      "is_fixed": false
+    },
+    {
+      "id": "80f3ca3d-40e8-4fdc-81bb-c37ce60a2066",
+      "subject_id": "7fb63b13-5c86-50a9-8113-e7889126450b",
+      "faculty_id": "bd5b0af1-fd06-5b40-818e-2108d16aea85",
+      "section_id": "6a29463f-8ca5-5c51-acd7-f3f03f48c7c9",
+      "programme_id": "cd5ceef5-74fa-5ab6-9db8-d9350a265f64",
+      "semester_id": "38beb7ae-51c9-564b-b9c6-27312769f791",
+      "room_id": "75062769-d5f5-5223-862f-ec9ce457952e",
+      "room_name": "CS Lab 1",
+      "subject_name": "Machine Learning",
+      "faculty_name": "Dr. Verma",
+      "day": "Wednesday",
+      "start_time": "09:00",
+      "end_time": "11:00",
+      "session_type": "practical",
+      "batch_id": "1088fcb3-1e2b-5a38-a025-d99a9865d71b",
+      "batch_name": "B2",
+      "is_locked": false,
+      "is_fixed": false
+    },
+    {
+      "id": "515ea440-b28b-4e2c-bb2b-b7aebce00bc7",
+      "subject_id": "d87e6b18-61a7-5e0f-b200-696f7e5df815",
+      "faculty_id": "01adb332-9e2a-5fc0-8260-115422103562",
+      "section_id": "207056aa-f955-5369-9128-3c127512654b",
+      "programme_id": "5ed2bd13-74fd-5a24-976b-fce88dbab108",
+      "semester_id": "68cf0d64-fe92-59e0-bdec-89126c7f099a",
+      "room_id": "b95ac00a-b642-5607-96e6-22dda21d15ee",
+      "room_name": "CS Lab 2",
+      "subject_name": "Data Structures",
+      "faculty_name": "Dr. Sharma",
+      "day": "Monday",
+      "start_time": "10:00",
+      "end_time": "12:00",
+      "session_type": "practical",
+      "batch_id": "99dd08f9-3c5b-55a8-aa76-20839600e0ae",
+      "batch_name": "B1",
+      "is_locked": false,
+      "is_fixed": false
+    },
+    {
+      "id": "e13b2d1b-be27-4caf-ac0e-38b69e72e0d0",
+      "subject_id": "d87e6b18-61a7-5e0f-b200-696f7e5df815",
+      "faculty_id": "01adb332-9e2a-5fc0-8260-115422103562",
+      "section_id": "207056aa-f955-5369-9128-3c127512654b",
+      "programme_id": "5ed2bd13-74fd-5a24-976b-fce88dbab108",
+      "semester_id": "68cf0d64-fe92-59e0-bdec-89126c7f099a",
+      "room_id": "75062769-d5f5-5223-862f-ec9ce457952e",
+      "room_name": "CS Lab 1",
+      "subject_name": "Data Structures",
+      "faculty_name": "Dr. Sharma",
+      "day": "Tuesday",
+      "start_time": "09:00",
+      "end_time": "11:00",
+      "session_type": "practical",
+      "batch_id": "65c7f31e-6980-5b67-a468-3396596dc88f",
+      "batch_name": "B2",
+      "is_locked": false,
+      "is_fixed": false
+    },
+    {
+      "id": "18a03e5f-c4e3-48e4-886e-3873cade57ca",
+      "subject_id": "1e0837ca-ca06-5c62-8eca-b11e4715408f",
+      "faculty_id": "f058ad97-28ef-5ae8-b07e-94dd8b4e59b3",
+      "section_id": "207056aa-f955-5369-9128-3c127512654b",
+      "programme_id": "5ed2bd13-74fd-5a24-976b-fce88dbab108",
+      "semester_id": "68cf0d64-fe92-59e0-bdec-89126c7f099a",
+      "room_id": "75062769-d5f5-5223-862f-ec9ce457952e",
+      "room_name": "CS Lab 1",
+      "subject_name": "Introduction to Cyber Security",
+      "faculty_name": "Prof. Mehta",
+      "day": "Monday",
+      "start_time": "14:00",
+      "end_time": "16:00",
+      "session_type": "practical",
+      "batch_id": "99dd08f9-3c5b-55a8-aa76-20839600e0ae",
+      "batch_name": "B1",
+      "is_locked": false,
+      "is_fixed": false
+    },
+    {
+      "id": "cbbcf6ca-77ae-4f1e-8dac-585fa435ad4e",
+      "subject_id": "1e0837ca-ca06-5c62-8eca-b11e4715408f",
+      "faculty_id": "f058ad97-28ef-5ae8-b07e-94dd8b4e59b3",
+      "section_id": "207056aa-f955-5369-9128-3c127512654b",
+      "programme_id": "5ed2bd13-74fd-5a24-976b-fce88dbab108",
+      "semester_id": "68cf0d64-fe92-59e0-bdec-89126c7f099a",
+      "room_id": "75062769-d5f5-5223-862f-ec9ce457952e",
+      "room_name": "CS Lab 1",
+      "subject_name": "Introduction to Cyber Security",
+      "faculty_name": "Prof. Mehta",
+      "day": "Tuesday",
+      "start_time": "11:00",
+      "end_time": "13:00",
+      "session_type": "practical",
+      "batch_id": "65c7f31e-6980-5b67-a468-3396596dc88f",
+      "batch_name": "B2",
+      "is_locked": false,
+      "is_fixed": false
+    },
+    {
+      "id": "b43e97ed-0132-4f41-838e-46174d33ce03",
+      "subject_id": "27b3914f-be8b-5dc8-b99f-679f978e78bb",
+      "faculty_id": "3339a452-fee1-5331-bff4-236e5d979ade",
+      "section_id": "207056aa-f955-5369-9128-3c127512654b",
+      "programme_id": "5ed2bd13-74fd-5a24-976b-fce88dbab108",
+      "semester_id": "68cf0d64-fe92-59e0-bdec-89126c7f099a",
+      "room_id": "ca8d6fe6-9989-5de2-94aa-9a544f976de7",
+      "room_name": "CR-101",
+      "subject_name": "Digital Logic",
+      "faculty_name": "Dr. Patel",
+      "day": "Monday",
+      "start_time": "12:00",
+      "end_time": "13:00",
+      "session_type": "theory",
+      "batch_id": "",
+      "batch_name": "",
+      "is_locked": false,
+      "is_fixed": false
+    },
+    {
+      "id": "7810924b-93d2-426a-bffb-cb4c85545606",
+      "subject_id": "27b3914f-be8b-5dc8-b99f-679f978e78bb",
+      "faculty_id": "3339a452-fee1-5331-bff4-236e5d979ade",
+      "section_id": "207056aa-f955-5369-9128-3c127512654b",
+      "programme_id": "5ed2bd13-74fd-5a24-976b-fce88dbab108",
+      "semester_id": "68cf0d64-fe92-59e0-bdec-89126c7f099a",
+      "room_id": "ca8d6fe6-9989-5de2-94aa-9a544f976de7",
+      "room_name": "CR-101",
+      "subject_name": "Digital Logic",
+      "faculty_name": "Dr. Patel",
+      "day": "Tuesday",
+      "start_time": "14:00",
+      "end_time": "15:00",
+      "session_type": "theory",
+      "batch_id": "",
+      "batch_name": "",
+      "is_locked": false,
+      "is_fixed": false
+    },
+    {
+      "id": "8014741d-f9cc-4dfe-90e2-e40b04282166",
+      "subject_id": "27b3914f-be8b-5dc8-b99f-679f978e78bb",
+      "faculty_id": "3339a452-fee1-5331-bff4-236e5d979ade",
+      "section_id": "207056aa-f955-5369-9128-3c127512654b",
+      "programme_id": "5ed2bd13-74fd-5a24-976b-fce88dbab108",
+      "semester_id": "68cf0d64-fe92-59e0-bdec-89126c7f099a",
+      "room_id": "ca8d6fe6-9989-5de2-94aa-9a544f976de7",
+      "room_name": "CR-101",
+      "subject_name": "Digital Logic",
+      "faculty_name": "Dr. Patel",
+      "day": "Wednesday",
+      "start_time": "09:00",
+      "end_time": "10:00",
+      "session_type": "theory",
+      "batch_id": "",
+      "batch_name": "",
+      "is_locked": false,
+      "is_fixed": false
+    },
+    {
+      "id": "d7f21bf8-acb3-4926-9927-c980796ff9ed",
+      "subject_id": "7fb63b13-5c86-50a9-8113-e7889126450b",
+      "faculty_id": "bd5b0af1-fd06-5b40-818e-2108d16aea85",
+      "section_id": "6a29463f-8ca5-5c51-acd7-f3f03f48c7c9",
+      "programme_id": "cd5ceef5-74fa-5ab6-9db8-d9350a265f64",
+      "semester_id": "38beb7ae-51c9-564b-b9c6-27312769f791",
+      "room_id": "ca8d6fe6-9989-5de2-94aa-9a544f976de7",
+      "room_name": "CR-101",
+      "subject_name": "Machine Learning",
+      "faculty_name": "Dr. Verma",
+      "day": "Friday",
+      "start_time": "09:00",
+      "end_time": "10:00",
+      "session_type": "theory",
+      "batch_id": "",
+      "batch_name": "",
+      "is_locked": false,
+      "is_fixed": false
+    },
+    {
+      "id": "806e1e89-4bb6-4b87-93d8-5984e864b1d9",
+      "subject_id": "7fb63b13-5c86-50a9-8113-e7889126450b",
+      "faculty_id": "bd5b0af1-fd06-5b40-818e-2108d16aea85",
+      "section_id": "6a29463f-8ca5-5c51-acd7-f3f03f48c7c9",
+      "programme_id": "cd5ceef5-74fa-5ab6-9db8-d9350a265f64",
+      "semester_id": "38beb7ae-51c9-564b-b9c6-27312769f791",
+      "room_id": "ca8d6fe6-9989-5de2-94aa-9a544f976de7",
+      "room_name": "CR-101",
+      "subject_name": "Machine Learning",
+      "faculty_name": "Dr. Verma",
+      "day": "Friday",
+      "start_time": "10:00",
+      "end_time": "11:00",
+      "session_type": "theory",
+      "batch_id": "",
+      "batch_name": "",
+      "is_locked": false,
+      "is_fixed": false
+    },
+    {
+      "id": "69acf77c-b982-45f1-8838-1df3f91f133e",
+      "subject_id": "7fb63b13-5c86-50a9-8113-e7889126450b",
+      "faculty_id": "bd5b0af1-fd06-5b40-818e-2108d16aea85",
+      "section_id": "6a29463f-8ca5-5c51-acd7-f3f03f48c7c9",
+      "programme_id": "cd5ceef5-74fa-5ab6-9db8-d9350a265f64",
+      "semester_id": "38beb7ae-51c9-564b-b9c6-27312769f791",
+      "room_id": "ca8d6fe6-9989-5de2-94aa-9a544f976de7",
+      "room_name": "CR-101",
+      "subject_name": "Machine Learning",
+      "faculty_name": "Dr. Verma",
+      "day": "Monday",
+      "start_time": "11:00",
+      "end_time": "12:00",
+      "session_type": "theory",
+      "batch_id": "",
+      "batch_name": "",
+      "is_locked": false,
+      "is_fixed": false
+    },
+    {
+      "id": "48c81774-9a23-4c91-b07a-c507a35c4de4",
+      "subject_id": "407fcc4c-c1b4-5181-8b1d-6f950eae84ba",
+      "faculty_id": "ee814ac2-fdb2-530a-9af6-d86dda31ded1",
+      "section_id": "207056aa-f955-5369-9128-3c127512654b",
+      "programme_id": "5ed2bd13-74fd-5a24-976b-fce88dbab108",
+      "semester_id": "68cf0d64-fe92-59e0-bdec-89126c7f099a",
+      "room_id": "ca8d6fe6-9989-5de2-94aa-9a544f976de7",
+      "room_name": "CR-101",
+      "subject_name": "Communication Skills",
+      "faculty_name": "Dr. Gupta",
+      "day": "Tuesday",
+      "start_time": "15:00",
+      "end_time": "16:00",
+      "session_type": "theory",
+      "batch_id": "",
+      "batch_name": "",
+      "is_locked": false,
+      "is_fixed": false
+    },
+    {
+      "id": "3c4772b4-5960-4f10-ae77-3b6bd8e1643e",
+      "subject_id": "407fcc4c-c1b4-5181-8b1d-6f950eae84ba",
+      "faculty_id": "ee814ac2-fdb2-530a-9af6-d86dda31ded1",
+      "section_id": "207056aa-f955-5369-9128-3c127512654b",
+      "programme_id": "5ed2bd13-74fd-5a24-976b-fce88dbab108",
+      "semester_id": "68cf0d64-fe92-59e0-bdec-89126c7f099a",
+      "room_id": "ca8d6fe6-9989-5de2-94aa-9a544f976de7",
+      "room_name": "CR-101",
+      "subject_name": "Communication Skills",
+      "faculty_name": "Dr. Gupta",
+      "day": "Wednesday",
+      "start_time": "10:00",
+      "end_time": "11:00",
+      "session_type": "theory",
+      "batch_id": "",
+      "batch_name": "",
+      "is_locked": false,
+      "is_fixed": false
+    },
+    {
+      "id": "103f6baa-db54-4aee-8764-ec04cce8e073",
+      "subject_id": "d87e6b18-61a7-5e0f-b200-696f7e5df815",
+      "faculty_id": "01adb332-9e2a-5fc0-8260-115422103562",
+      "section_id": "207056aa-f955-5369-9128-3c127512654b",
+      "programme_id": "5ed2bd13-74fd-5a24-976b-fce88dbab108",
+      "semester_id": "68cf0d64-fe92-59e0-bdec-89126c7f099a",
+      "room_id": "ca8d6fe6-9989-5de2-94aa-9a544f976de7",
+      "room_name": "CR-101",
+      "subject_name": "Data Structures",
+      "faculty_name": "Dr. Sharma",
+      "day": "Wednesday",
+      "start_time": "11:00",
+      "end_time": "12:00",
+      "session_type": "theory",
+      "batch_id": "",
+      "batch_name": "",
+      "is_locked": false,
+      "is_fixed": false
+    },
+    {
+      "id": "5758c484-d98b-4a50-bfaf-99cbff5c7b0b",
+      "subject_id": "d87e6b18-61a7-5e0f-b200-696f7e5df815",
+      "faculty_id": "01adb332-9e2a-5fc0-8260-115422103562",
+      "section_id": "207056aa-f955-5369-9128-3c127512654b",
+      "programme_id": "5ed2bd13-74fd-5a24-976b-fce88dbab108",
+      "semester_id": "68cf0d64-fe92-59e0-bdec-89126c7f099a",
+      "room_id": "ca8d6fe6-9989-5de2-94aa-9a544f976de7",
+      "room_name": "CR-101",
+      "subject_name": "Data Structures",
+      "faculty_name": "Dr. Sharma",
+      "day": "Thursday",
+      "start_time": "09:00",
+      "end_time": "10:00",
+      "session_type": "theory",
+      "batch_id": "",
+      "batch_name": "",
+      "is_locked": false,
+      "is_fixed": false
+    },
+    {
+      "id": "d5a6b0bd-99e9-492a-bafe-e2b54dc1d957",
+      "subject_id": "d87e6b18-61a7-5e0f-b200-696f7e5df815",
+      "faculty_id": "01adb332-9e2a-5fc0-8260-115422103562",
+      "section_id": "207056aa-f955-5369-9128-3c127512654b",
+      "programme_id": "5ed2bd13-74fd-5a24-976b-fce88dbab108",
+      "semester_id": "68cf0d64-fe92-59e0-bdec-89126c7f099a",
+      "room_id": "452c2349-afe4-5e88-b72f-e6aba60d0e1e",
+      "room_name": "CR-102",
+      "subject_name": "Data Structures",
+      "faculty_name": "Dr. Sharma",
+      "day": "Friday",
+      "start_time": "09:00",
+      "end_time": "10:00",
+      "session_type": "theory",
+      "batch_id": "",
+      "batch_name": "",
+      "is_locked": false,
+      "is_fixed": false
+    },
+    {
+      "id": "cec6aa20-dc89-4c0d-9de5-7874b6c5085d",
+      "subject_id": "214ece15-d0f1-59cd-901a-23ada6f9f652",
+      "faculty_id": "234711f1-ba00-5d27-8c68-7fb379310688",
+      "section_id": "207056aa-f955-5369-9128-3c127512654b",
+      "programme_id": "5ed2bd13-74fd-5a24-976b-fce88dbab108",
+      "semester_id": "68cf0d64-fe92-59e0-bdec-89126c7f099a",
+      "room_id": "ca8d6fe6-9989-5de2-94aa-9a544f976de7",
+      "room_name": "CR-101",
+      "subject_name": "Mathematics-I",
+      "faculty_name": "Prof. Singh",
+      "day": "Tuesday",
+      "start_time": "16:00",
+      "end_time": "17:00",
+      "session_type": "theory",
+      "batch_id": "",
+      "batch_name": "",
+      "is_locked": false,
+      "is_fixed": false
+    },
+    {
+      "id": "fa82f4d6-8568-43ba-943e-c48210649ed6",
+      "subject_id": "214ece15-d0f1-59cd-901a-23ada6f9f652",
+      "faculty_id": "234711f1-ba00-5d27-8c68-7fb379310688",
+      "section_id": "207056aa-f955-5369-9128-3c127512654b",
+      "programme_id": "5ed2bd13-74fd-5a24-976b-fce88dbab108",
+      "semester_id": "68cf0d64-fe92-59e0-bdec-89126c7f099a",
+      "room_id": "ca8d6fe6-9989-5de2-94aa-9a544f976de7",
+      "room_name": "CR-101",
+      "subject_name": "Mathematics-I",
+      "faculty_name": "Prof. Singh",
+      "day": "Wednesday",
+      "start_time": "12:00",
+      "end_time": "13:00",
+      "session_type": "theory",
+      "batch_id": "",
+      "batch_name": "",
+      "is_locked": false,
+      "is_fixed": false
+    },
+    {
+      "id": "077d3f4e-9d4d-45c6-b94e-97991187b1ba",
+      "subject_id": "214ece15-d0f1-59cd-901a-23ada6f9f652",
+      "faculty_id": "234711f1-ba00-5d27-8c68-7fb379310688",
+      "section_id": "207056aa-f955-5369-9128-3c127512654b",
+      "programme_id": "5ed2bd13-74fd-5a24-976b-fce88dbab108",
+      "semester_id": "68cf0d64-fe92-59e0-bdec-89126c7f099a",
+      "room_id": "ca8d6fe6-9989-5de2-94aa-9a544f976de7",
+      "room_name": "CR-101",
+      "subject_name": "Mathematics-I",
+      "faculty_name": "Prof. Singh",
+      "day": "Thursday",
+      "start_time": "10:00",
+      "end_time": "11:00",
+      "session_type": "theory",
+      "batch_id": "",
+      "batch_name": "",
+      "is_locked": false,
+      "is_fixed": false
+    },
+    {
+      "id": "acf257b0-24e2-4b4e-8b09-502cc78f9ec6",
+      "subject_id": "1e0837ca-ca06-5c62-8eca-b11e4715408f",
+      "faculty_id": "f058ad97-28ef-5ae8-b07e-94dd8b4e59b3",
+      "section_id": "207056aa-f955-5369-9128-3c127512654b",
+      "programme_id": "5ed2bd13-74fd-5a24-976b-fce88dbab108",
+      "semester_id": "68cf0d64-fe92-59e0-bdec-89126c7f099a",
+      "room_id": "ca8d6fe6-9989-5de2-94aa-9a544f976de7",
+      "room_name": "CR-101",
+      "subject_name": "Introduction to Cyber Security",
+      "faculty_name": "Prof. Mehta",
+      "day": "Wednesday",
+      "start_time": "14:00",
+      "end_time": "15:00",
+      "session_type": "theory",
+      "batch_id": "",
+      "batch_name": "",
+      "is_locked": false,
+      "is_fixed": false
+    },
+    {
+      "id": "db0b0dad-1967-43bc-95a7-4b04d36c2306",
+      "subject_id": "1e0837ca-ca06-5c62-8eca-b11e4715408f",
+      "faculty_id": "f058ad97-28ef-5ae8-b07e-94dd8b4e59b3",
+      "section_id": "207056aa-f955-5369-9128-3c127512654b",
+      "programme_id": "5ed2bd13-74fd-5a24-976b-fce88dbab108",
+      "semester_id": "68cf0d64-fe92-59e0-bdec-89126c7f099a",
+      "room_id": "ca8d6fe6-9989-5de2-94aa-9a544f976de7",
+      "room_name": "CR-101",
+      "subject_name": "Introduction to Cyber Security",
+      "faculty_name": "Prof. Mehta",
+      "day": "Thursday",
+      "start_time": "11:00",
+      "end_time": "12:00",
+      "session_type": "theory",
+      "batch_id": "",
+      "batch_name": "",
+      "is_locked": false,
+      "is_fixed": false
+    },
+    {
+      "id": "4cb2d97a-514a-446c-88d5-70059f3ab99c",
+      "subject_id": "1e0837ca-ca06-5c62-8eca-b11e4715408f",
+      "faculty_id": "f058ad97-28ef-5ae8-b07e-94dd8b4e59b3",
+      "section_id": "207056aa-f955-5369-9128-3c127512654b",
+      "programme_id": "5ed2bd13-74fd-5a24-976b-fce88dbab108",
+      "semester_id": "68cf0d64-fe92-59e0-bdec-89126c7f099a",
+      "room_id": "452c2349-afe4-5e88-b72f-e6aba60d0e1e",
+      "room_name": "CR-102",
+      "subject_name": "Introduction to Cyber Security",
+      "faculty_name": "Prof. Mehta",
+      "day": "Friday",
+      "start_time": "10:00",
+      "end_time": "11:00",
+      "session_type": "theory",
+      "batch_id": "",
+      "batch_name": "",
+      "is_locked": false,
+      "is_fixed": false
+    },
+    {
+      "id": "4387e2c2-b317-419f-ae04-4328f2b5f800",
+      "subject_id": "9c40bbc0-c5a1-5f84-a23d-ab9ad067f8f4",
+      "faculty_id": "234711f1-ba00-5d27-8c68-7fb379310688",
+      "section_id": "6a29463f-8ca5-5c51-acd7-f3f03f48c7c9",
+      "programme_id": "cd5ceef5-74fa-5ab6-9db8-d9350a265f64",
+      "semester_id": "38beb7ae-51c9-564b-b9c6-27312769f791",
+      "room_id": "ca8d6fe6-9989-5de2-94aa-9a544f976de7",
+      "room_name": "CR-101",
+      "subject_name": "Research Methodology",
+      "faculty_name": "Prof. Singh",
+      "day": "Friday",
+      "start_time": "11:00",
+      "end_time": "12:00",
+      "session_type": "theory",
+      "batch_id": "",
+      "batch_name": "",
+      "is_locked": false,
+      "is_fixed": false
+    },
+    {
+      "id": "a24c2d30-9a8b-4e76-810d-a42879f31e3c",
+      "subject_id": "9c40bbc0-c5a1-5f84-a23d-ab9ad067f8f4",
+      "faculty_id": "234711f1-ba00-5d27-8c68-7fb379310688",
+      "section_id": "6a29463f-8ca5-5c51-acd7-f3f03f48c7c9",
+      "programme_id": "cd5ceef5-74fa-5ab6-9db8-d9350a265f64",
+      "semester_id": "38beb7ae-51c9-564b-b9c6-27312769f791",
+      "room_id": "452c2349-afe4-5e88-b72f-e6aba60d0e1e",
+      "room_name": "CR-102",
+      "subject_name": "Research Methodology",
+      "faculty_name": "Prof. Singh",
+      "day": "Monday",
+      "start_time": "12:00",
+      "end_time": "13:00",
+      "session_type": "theory",
+      "batch_id": "",
+      "batch_name": "",
+      "is_locked": false,
+      "is_fixed": false
+    },
+    {
+      "id": "4bf89297-f651-4a34-9544-f1cc77b520fd",
+      "subject_id": "af1d579e-cec5-5097-b5a4-8f739553380c",
+      "faculty_id": "01adb332-9e2a-5fc0-8260-115422103562",
+      "section_id": "6a29463f-8ca5-5c51-acd7-f3f03f48c7c9",
+      "programme_id": "cd5ceef5-74fa-5ab6-9db8-d9350a265f64",
+      "semester_id": "38beb7ae-51c9-564b-b9c6-27312769f791",
+      "room_id": "452c2349-afe4-5e88-b72f-e6aba60d0e1e",
+      "room_name": "CR-102",
+      "subject_name": "Advanced Algorithms",
+      "faculty_name": "Dr. Sharma",
+      "day": "Thursday",
+      "start_time": "10:00",
+      "end_time": "11:00",
+      "session_type": "theory",
+      "batch_id": "",
+      "batch_name": "",
+      "is_locked": false,
+      "is_fixed": false
+    },
+    {
+      "id": "5c2318a1-d24f-41ed-b66e-37388ea8dfd8",
+      "subject_id": "af1d579e-cec5-5097-b5a4-8f739553380c",
+      "faculty_id": "01adb332-9e2a-5fc0-8260-115422103562",
+      "section_id": "6a29463f-8ca5-5c51-acd7-f3f03f48c7c9",
+      "programme_id": "cd5ceef5-74fa-5ab6-9db8-d9350a265f64",
+      "semester_id": "38beb7ae-51c9-564b-b9c6-27312769f791",
+      "room_id": "ca8d6fe6-9989-5de2-94aa-9a544f976de7",
+      "room_name": "CR-101",
+      "subject_name": "Advanced Algorithms",
+      "faculty_name": "Dr. Sharma",
+      "day": "Tuesday",
+      "start_time": "11:00",
+      "end_time": "12:00",
+      "session_type": "theory",
+      "batch_id": "",
+      "batch_name": "",
+      "is_locked": false,
+      "is_fixed": false
+    },
+    {
+      "id": "0397d73b-89e3-47e4-ab0e-16ee67c6aa5e",
+      "subject_id": "af1d579e-cec5-5097-b5a4-8f739553380c",
+      "faculty_id": "01adb332-9e2a-5fc0-8260-115422103562",
+      "section_id": "6a29463f-8ca5-5c51-acd7-f3f03f48c7c9",
+      "programme_id": "cd5ceef5-74fa-5ab6-9db8-d9350a265f64",
+      "semester_id": "38beb7ae-51c9-564b-b9c6-27312769f791",
+      "room_id": "452c2349-afe4-5e88-b72f-e6aba60d0e1e",
+      "room_name": "CR-102",
+      "subject_name": "Advanced Algorithms",
+      "faculty_name": "Dr. Sharma",
+      "day": "Thursday",
+      "start_time": "11:00",
+      "end_time": "12:00",
+      "session_type": "theory",
+      "batch_id": "",
+      "batch_name": "",
+      "is_locked": false,
+      "is_fixed": false
+    }
+  ],
+  "timetable_state": {
+    "status": "draft",
+    "generation_status": "",
+    "generation_message": "",
+    "unscheduled_sessions": [],
+    "conflicts": [],
+    "last_generated": ""
+  },
+  "demo_data_loaded": true
+}
