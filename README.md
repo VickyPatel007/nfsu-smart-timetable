@@ -26,6 +26,25 @@ pnpm install
 netlify dev        # or: pnpm dev
 ```
 
+## Run with Docker
+
+Docker provides a consistent local demo environment without installing Node.js
+on the host machine:
+
+```bash
+docker compose up --build
+```
+
+Open [http://localhost:3000](http://localhost:3000). Stop it with:
+
+```bash
+docker compose down
+```
+
+Netlify Identity login and signup require a real Netlify deployment and do not
+authenticate on localhost, including inside Docker. Use a Netlify branch
+preview to test `/login`, `/admin`, and `/student` authentication.
+
 ## Roadmap
 
 See [PLAN.md](./PLAN.md). Next up: the data model on Netlify Database, then management screens, the TypeScript scheduling engine, drag-to-edit with instant clash checks, role-based accounts, and sharing/export.
