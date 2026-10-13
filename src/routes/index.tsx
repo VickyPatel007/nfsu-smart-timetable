@@ -7,8 +7,13 @@ import { openGenerate, uiStore } from '@/lib/store'
 import { allBlocks, allSections, fmt12, periods, shortDay, subjectColor } from '@/lib/timetable'
 import { useToday } from '@/lib/useToday'
 import { Button, Card, CardTitle, Meter, PageHeader, StatusPill } from '@/components/ui'
+import { getServerUser } from '@/lib/auth'
+import { redirect } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/')({
+  beforeLoad: async () => {
+    if (!(await getServerUser())) throw redirect({ to: '/login' })
+  },
   component: Overview,
 })
 

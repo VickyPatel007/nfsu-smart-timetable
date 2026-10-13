@@ -41,6 +41,16 @@ function Brand() {
 function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
   const path = useRouterState({ select: (s) => s.location.pathname })
   const { user } = useIdentity()
+  if (!user) {
+    return (
+      <nav className="flex flex-col gap-0.5">
+        <Link to="/login" onClick={onNavigate} className="group relative flex items-center gap-3 rounded-lg px-3 py-2 text-[14px] text-oxblood hover:bg-card/60">
+          <LogIn className="h-4 w-4" strokeWidth={1.8} />
+          Sign in to workspace
+        </Link>
+      </nav>
+    )
+  }
   return (
     <nav className="flex flex-col gap-0.5">
       {NAV.map(({ to, label, icon: Icon }) => {

@@ -8,10 +8,15 @@ import { type Block, type ViewKind, allSections, blocksFor, downloadText, sessio
 import { WeekGrid } from '@/components/WeekGrid'
 import { SessionDrawer } from '@/components/SessionDrawer'
 import { Button, PageHeader, Segmented, StatusPill } from '@/components/ui'
+import { getServerUser } from '@/lib/auth'
+import { redirect } from '@tanstack/react-router'
 
 type Search = { view?: ViewKind; id?: string }
 
 export const Route = createFileRoute('/timetable')({
+  beforeLoad: async () => {
+    if (!(await getServerUser())) throw redirect({ to: '/login' })
+  },
   validateSearch: (s: Record<string, unknown>): Search => {
     const view = (['section', 'faculty', 'room'] as const).includes(s.view as ViewKind) ? (s.view as ViewKind) : undefined
     return { view, id: typeof s.id === 'string' && s.id ? s.id : undefined }

@@ -5,8 +5,13 @@ import * as db from '@/data/fixtures'
 import { facultyLoad, subjectColor } from '@/lib/timetable'
 import { MiniWeek } from '@/components/MiniWeek'
 import { Meter, PageHeader } from '@/components/ui'
+import { getServerUser } from '@/lib/auth'
+import { redirect } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/faculty')({
+  beforeLoad: async () => {
+    if (!(await getServerUser())) throw redirect({ to: '/login' })
+  },
   head: () => ({ meta: [{ title: 'Faculty · NFSU Smart Timetable' }] }),
   component: FacultyPage,
 })

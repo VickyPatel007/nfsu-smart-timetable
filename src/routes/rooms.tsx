@@ -6,8 +6,13 @@ import { roomUtilisation, subjectById, toMin } from '@/lib/timetable'
 import { useToday } from '@/lib/useToday'
 import { MiniWeek } from '@/components/MiniWeek'
 import { Meter, PageHeader, Segmented } from '@/components/ui'
+import { getServerUser } from '@/lib/auth'
+import { redirect } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/rooms')({
+  beforeLoad: async () => {
+    if (!(await getServerUser())) throw redirect({ to: '/login' })
+  },
   head: () => ({ meta: [{ title: 'Rooms & Labs · NFSU Smart Timetable' }] }),
   component: RoomsPage,
 })
