@@ -1,5 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 import { getUser, logout as netlifyLogout, onAuthChange, type User } from '@netlify/identity'
+import { isLocalAuth } from './auth-mode'
+import { getLocalUser, localLogout } from './local-auth'
 
 interface IdentityContextValue {
   user: User | null
@@ -15,14 +17,14 @@ export function IdentityProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let mounted = true
-    void getUser().then((currentUser) => {
+    void (isLocalAuth ? getLocalUser() : getUser()).then((currentUser) => {
       if (mounted) {
         setUser(currentUser ?? null)
         setReady(true)
       }
     })
 
-    const unsubscribe = onAuthChange((_event, nextUser) => {
+    const unsubscribe = isLocalAuth ? () => {} : onAuthChange((_event, nextUser) => {
       if (mounted) setUser(nextUser ?? null)
     })
 
@@ -32,7 +34,14 @@ export function IdentityProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
-  const logout = async () => netlifyLogout()
+  const logout = async () => {
+    if (isLocalAuth) {
+      await localLogout()
+      setUser(null)
+    } else {
+      await netlifyLogout()
+    }
+  }
 
   return <IdentityContext.Provider value={{ user, ready, logout }}>{children}</IdentityContext.Provider>
 }

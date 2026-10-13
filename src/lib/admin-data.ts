@@ -11,12 +11,14 @@ const DEFAULT_STATE: PublicationState = {
   status: 'draft',
   updatedAt: new Date(0).toISOString(),
 }
+let localPublicationState = DEFAULT_STATE
 
 const timetableStore = () => getStore({ name: 'nfsu-timetable', consistency: 'strong' })
 
 export const getPublicationState = createServerFn({ method: 'GET' })
   .middleware([requireRoleMiddleware('admin')])
   .handler(async () => {
+    if (process.env.LOCAL_AUTH === 'true') return localPublicationState
     const state = (await timetableStore().get('publication', { type: 'json' })) as PublicationState | null
     return state ?? DEFAULT_STATE
   })
@@ -29,6 +31,10 @@ export const setPublicationState = createServerFn({ method: 'POST' })
       throw new Error('Invalid publication status')
     }
     const nextState = { ...data, updatedAt: new Date().toISOString() }
+    if (process.env.LOCAL_AUTH === 'true') {
+      localPublicationState = nextState
+      return nextState
+    }
     await timetableStore().setJSON('publication', nextState)
     return nextState
   })

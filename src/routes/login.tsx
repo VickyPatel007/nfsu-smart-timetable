@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react'
 import { Crest } from '@/components/AppShell'
 import { useIdentity } from '@/lib/identity-context'
 import { Button } from '@/components/ui'
+import { isLocalAuth } from '@/lib/auth-mode'
+import { localLogin, localSignup } from '@/lib/local-auth'
 
 export const Route = createFileRoute('/login')({
   head: () => ({ meta: [{ title: 'Sign in · NFSU Smart Timetable' }] }),
@@ -33,11 +35,20 @@ function LoginPage() {
     setMessage('')
     try {
       if (mode === 'signup') {
-        await signup(email, password, { full_name: name })
-        setMessage(`Confirmation email sent to ${email}. Confirm it before signing in.`)
+        if (isLocalAuth) {
+          const created = await localSignup({ data: { email, password, name } })
+          await navigate({ to: created.roles.includes('admin') ? '/admin' : '/student' })
+          window.location.reload()
+        } else {
+          await signup(email, password, { full_name: name })
+          setMessage(`Confirmation email sent to ${email}. Confirm it before signing in.`)
+        }
       } else {
-        const authenticated = await login(email, password)
+        const authenticated = isLocalAuth
+          ? await localLogin({ data: { email, password } })
+          : await login(email, password)
         await navigate({ to: authenticated.roles?.includes('admin') ? '/admin' : '/student' })
+        if (isLocalAuth) window.location.reload()
       }
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Unable to authenticate')
