@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev --port 3000",
-    "build": "vite build"
+    "build": "vite build",
+    "start": "vite preview --host 0.0.0.0 --port 3000"
   },
   "dependencies": {
     "@netlify/blobs": "^9.1.0",
