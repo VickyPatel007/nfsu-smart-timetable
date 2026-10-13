@@ -40,6 +40,7 @@ function Brand() {
 
 function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
   const path = useRouterState({ select: (s) => s.location.pathname })
+  const { user } = useIdentity()
   return (
     <nav className="flex flex-col gap-0.5">
       {NAV.map(({ to, label, icon: Icon }) => {
@@ -59,10 +60,17 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
           </Link>
         )
       })}
-      <Link to="/student" onClick={onNavigate} className="group relative flex items-center gap-3 rounded-lg px-3 py-2 text-[14px] text-ink-soft hover:bg-card/60 hover:text-ink">
-        <GraduationCapIcon />
-        Student portal
-      </Link>
+      {user?.roles?.includes('admin') ? (
+        <Link to="/admin" onClick={onNavigate} className="group relative flex items-center gap-3 rounded-lg px-3 py-2 text-[14px] text-ink-soft hover:bg-card/60 hover:text-ink">
+          <ShieldCheck className="h-4 w-4 text-muted group-hover:text-ink-soft" strokeWidth={1.8} />
+          Admin panel
+        </Link>
+      ) : (
+        <Link to="/student" onClick={onNavigate} className="group relative flex items-center gap-3 rounded-lg px-3 py-2 text-[14px] text-ink-soft hover:bg-card/60 hover:text-ink">
+          <GraduationCapIcon />
+          Student panel
+        </Link>
+      )}
     </nav>
   )
 }

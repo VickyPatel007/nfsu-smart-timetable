@@ -11,8 +11,8 @@ import { getPublicationState, setPublicationState, type PublicationState } from 
 export const Route = createFileRoute('/admin')({
   beforeLoad: async () => {
     const user = await getServerUser()
-    if (!user) throw redirect({ to: '/login' })
-    if (!user.roles?.includes('admin')) throw redirect({ to: '/student' })
+    if (!user && !import.meta.env.DEV) throw redirect({ to: '/login' })
+    if (user && !user.roles?.includes('admin')) throw redirect({ to: '/student' })
     return { user }
   },
   head: () => ({ meta: [{ title: 'Admin · NFSU Smart Timetable' }] }),
@@ -20,17 +20,19 @@ export const Route = createFileRoute('/admin')({
 })
 
 function AdminPage() {
-  const { user, logout } = useIdentity()
+  const { user, logout, localMode } = useIdentity()
   const navigate = useNavigate()
   const status = useStore(uiStore, (state) => state.status)
   const [publication, setPublication] = useState<PublicationState | null>(null)
 
   useEffect(() => {
-    void getPublicationState().then(setPublication)
-  }, [])
+    if (!localMode) void getPublicationState().then(setPublication)
+  }, [localMode])
 
   const updatePublication = async (nextStatus: PublicationState['status']) => {
-    const next = await setPublicationState({ data: { status: nextStatus, updatedAt: new Date().toISOString() } })
+    const next = localMode
+      ? { status: nextStatus, updatedAt: new Date().toISOString() }
+      : await setPublicationState({ data: { status: nextStatus, updatedAt: new Date().toISOString() } })
     setPublication(next)
     setStatus(next.status)
   }

@@ -2,7 +2,7 @@ import { login, requestPasswordRecovery, signup } from '@netlify/identity'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 import { Crest } from '@/components/AppShell'
-import { useIdentity } from '@/lib/identity-context'
+import { localLogin, localSignup, useIdentity } from '@/lib/identity-context'
 import { Button } from '@/components/ui'
 
 export const Route = createFileRoute('/login')({
@@ -11,7 +11,7 @@ export const Route = createFileRoute('/login')({
 })
 
 function LoginPage() {
-  const { user, ready } = useIdentity()
+  const { user, ready, localMode } = useIdentity()
   const navigate = useNavigate()
   const [mode, setMode] = useState<'login' | 'signup'>('login')
   const [name, setName] = useState('')
@@ -33,11 +33,17 @@ function LoginPage() {
     setMessage('')
     try {
       if (mode === 'signup') {
-        await signup(email, password, { full_name: name })
-        setMessage(`Confirmation email sent to ${email}. Confirm it before signing in.`)
+        if (localMode) {
+          await localSignup(name, email, password)
+          setMessage('Student account created. Opening the student panel…')
+          await navigate({ to: '/student' })
+        } else {
+          await signup(email, password, { full_name: name })
+          setMessage(`Confirmation email sent to ${email}. Confirm it before signing in.`)
+        }
       } else {
-        await login(email, password)
-        await navigate({ to: '/student' })
+        const authenticated = localMode ? await localLogin(email, password) : await login(email, password)
+        await navigate({ to: authenticated.roles?.includes('admin') ? '/admin' : '/student' })
       }
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Unable to authenticate')
@@ -49,6 +55,7 @@ function LoginPage() {
   const recover = async () => {
     setError('')
     try {
+      if (localMode) throw new Error('Password recovery is available after Netlify deployment')
       await requestPasswordRecovery(email)
       setMessage(`Password reset email sent to ${email}.`)
     } catch (cause) {
@@ -68,8 +75,16 @@ function LoginPage() {
         </p>
         <h1 className="mt-2 font-serif text-3xl">{mode === 'login' ? 'Sign in' : 'Join the timetable'}</h1>
         <p className="mt-2 text-sm text-muted">
-          {mode === 'login' ? 'Use your university email to continue.' : 'Student accounts can view published schedules.'}
+          {localMode ? 'Local Docker demo mode: choose a demo account below.' : mode === 'login' ? 'Use your university email to continue.' : 'Student accounts can view published schedules.'}
         </p>
+        {localMode && mode === 'login' && (
+          <div className="mt-4 grid gap-2 rounded-lg bg-paper-deep p-3 text-xs">
+            <p className="font-medium text-ink">Demo admin</p>
+            <button onClick={() => { setEmail('admin@nfsu.local'); setPassword('admin123') }} className="text-left text-oxblood underline">admin@nfsu.local · admin123</button>
+            <p className="mt-1 font-medium text-ink">Demo student</p>
+            <button onClick={() => { setEmail('student@nfsu.local'); setPassword('student123') }} className="text-left text-oxblood underline">student@nfsu.local · student123</button>
+          </div>
+        )}
 
         <div className="mt-6 space-y-3">
           {mode === 'signup' && (

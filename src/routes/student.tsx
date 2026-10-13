@@ -8,7 +8,7 @@ import { allSections } from '@/lib/timetable'
 export const Route = createFileRoute('/student')({
   beforeLoad: async () => {
     const user = await getServerUser()
-    if (!user) throw redirect({ to: '/login' })
+    if (!user && !import.meta.env.DEV) throw redirect({ to: '/login' })
     return { user }
   },
   head: () => ({ meta: [{ title: 'Student timetable · NFSU Smart Timetable' }] }),

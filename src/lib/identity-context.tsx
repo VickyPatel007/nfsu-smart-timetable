@@ -11,15 +11,59 @@ interface IdentityContextValue {
   user: User | null
   ready: boolean
   logout: () => Promise<void>
+  localMode: boolean
 }
 
 const IdentityContext = createContext<IdentityContextValue | null>(null)
+const LOCAL_USER_KEY = 'nfsu-local-user'
+const LOCAL_USERS_KEY = 'nfsu-local-users'
+type LocalUser = User & { password: string }
+
+function readLocalUser() {
+  if (typeof window === 'undefined') return null
+  const raw = window.localStorage.getItem(LOCAL_USER_KEY)
+  return raw ? (JSON.parse(raw) as User) : null
+}
+
+function ensureDemoUsers() {
+  if (typeof window === 'undefined' || window.localStorage.getItem(LOCAL_USERS_KEY)) return
+  const users: LocalUser[] = [
+    {
+      id: 'local-admin',
+      email: 'admin@nfsu.local',
+      name: 'Timetable Admin',
+      password: 'admin123',
+      roles: ['admin'],
+      userMetadata: {},
+      appMetadata: {},
+    },
+    {
+      id: 'local-student',
+      email: 'student@nfsu.local',
+      name: 'Demo Student',
+      password: 'student123',
+      roles: ['student'],
+      userMetadata: {},
+      appMetadata: {},
+    },
+  ]
+  window.localStorage.setItem(LOCAL_USERS_KEY, JSON.stringify(users))
+}
 
 export function IdentityProvider({ children }: { children: ReactNode }) {
+  const localMode = import.meta.env.DEV
   const [user, setUser] = useState<User | null>(null)
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
+    if (localMode) {
+      ensureDemoUsers()
+      setUser(readLocalUser())
+      const syncLocalUser = () => setUser(readLocalUser())
+      window.addEventListener('nfsu-auth-change', syncLocalUser)
+      setReady(true)
+      return () => window.removeEventListener('nfsu-auth-change', syncLocalUser)
+    }
     let mounted = true
     void getUser().then((currentUser) => {
       if (mounted) {
@@ -36,9 +80,18 @@ export function IdentityProvider({ children }: { children: ReactNode }) {
       mounted = false
       unsubscribe()
     }
-  }, [])
+  }, [localMode])
 
-  return <IdentityContext.Provider value={{ user, ready, logout: netlifyLogout }}>{children}</IdentityContext.Provider>
+  const logout = async () => {
+    if (localMode) {
+      window.localStorage.removeItem(LOCAL_USER_KEY)
+      setUser(null)
+      return
+    }
+    await netlifyLogout()
+  }
+
+  return <IdentityContext.Provider value={{ user, ready, logout, localMode }}>{children}</IdentityContext.Provider>
 }
 
 export function useIdentity() {
@@ -49,4 +102,34 @@ export function useIdentity() {
 
 export function hasRole(user: User | null, role: string) {
   return Boolean(user?.roles?.includes(role))
+}
+
+export async function localLogin(email: string, password: string) {
+  const users = JSON.parse(window.localStorage.getItem(LOCAL_USERS_KEY) ?? '[]') as LocalUser[]
+  const user = users.find((candidate) => candidate.email === email && candidate.password === password)
+  if (!user) throw new Error('Invalid local demo email or password')
+  const { password: _password, ...safeUser } = user
+  window.localStorage.setItem(LOCAL_USER_KEY, JSON.stringify(safeUser))
+  window.dispatchEvent(new Event('nfsu-auth-change'))
+  return safeUser
+}
+
+export async function localSignup(name: string, email: string, password: string) {
+  const users = JSON.parse(window.localStorage.getItem(LOCAL_USERS_KEY) ?? '[]') as LocalUser[]
+  if (users.some((candidate) => candidate.email === email)) throw new Error('An account with this email already exists')
+  const user: LocalUser = {
+    id: crypto.randomUUID(),
+    email,
+    name,
+    password,
+    roles: ['student'],
+    userMetadata: {},
+    appMetadata: {},
+  }
+  users.push(user)
+  window.localStorage.setItem(LOCAL_USERS_KEY, JSON.stringify(users))
+  const { password: _password, ...safeUser } = user
+  window.localStorage.setItem(LOCAL_USER_KEY, JSON.stringify(safeUser))
+  window.dispatchEvent(new Event('nfsu-auth-change'))
+  return safeUser
 }
