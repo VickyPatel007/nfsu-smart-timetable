@@ -45,9 +45,9 @@ Netlify Identity login and signup require a real Netlify deployment and do not
 authenticate on localhost, including inside Docker. Use a Netlify branch
 preview to test `/login`, `/admin`, and `/student` authentication.
 
-For the local Docker demo, use `admin@nfsu.local` / `admin123` for the admin
-panel or `student@nfsu.local` / `student123` for the student panel. Local
-student signup is also enabled in development mode.
+For the local Docker demo, use `admin` / `admin` for the admin panel or
+`student` / `student` for the student panel. Local student signup is also
+enabled in development mode.
 
 ## Roadmap
 

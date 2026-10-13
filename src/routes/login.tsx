@@ -75,16 +75,8 @@ function LoginPage() {
         </p>
         <h1 className="mt-2 font-serif text-3xl">{mode === 'login' ? 'Sign in' : 'Join the timetable'}</h1>
         <p className="mt-2 text-sm text-muted">
-          {localMode ? 'Local Docker demo mode: choose a demo account below.' : mode === 'login' ? 'Use your university email to continue.' : 'Student accounts can view published schedules.'}
+          {localMode ? 'Enter your account details to continue.' : mode === 'login' ? 'Use your university email to continue.' : 'Student accounts can view published schedules.'}
         </p>
-        {localMode && mode === 'login' && (
-          <div className="mt-4 grid gap-2 rounded-lg bg-paper-deep p-3 text-xs">
-            <p className="font-medium text-ink">Demo admin</p>
-            <button onClick={() => { setEmail('admin@nfsu.local'); setPassword('admin123') }} className="text-left text-oxblood underline">admin@nfsu.local · admin123</button>
-            <p className="mt-1 font-medium text-ink">Demo student</p>
-            <button onClick={() => { setEmail('student@nfsu.local'); setPassword('student123') }} className="text-left text-oxblood underline">student@nfsu.local · student123</button>
-          </div>
-        )}
 
         <div className="mt-6 space-y-3">
           {mode === 'signup' && (

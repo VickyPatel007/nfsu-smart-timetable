@@ -26,22 +26,29 @@ function readLocalUser() {
 }
 
 function ensureDemoUsers() {
-  if (typeof window === 'undefined' || window.localStorage.getItem(LOCAL_USERS_KEY)) return
+  if (typeof window === 'undefined') return
+  const currentUsers = window.localStorage.getItem(LOCAL_USERS_KEY)
+  if (currentUsers) {
+    const users = JSON.parse(currentUsers) as LocalUser[]
+    const hasCurrentDefaults = users.some((user) => user.email === 'admin' || user.email === 'student')
+    if (hasCurrentDefaults) return
+    window.localStorage.removeItem(LOCAL_USER_KEY)
+  }
   const users: LocalUser[] = [
     {
       id: 'local-admin',
-      email: 'admin@nfsu.local',
+      email: 'admin',
       name: 'Timetable Admin',
-      password: 'admin123',
+      password: 'admin',
       roles: ['admin'],
       userMetadata: {},
       appMetadata: {},
     },
     {
       id: 'local-student',
-      email: 'student@nfsu.local',
+      email: 'student',
       name: 'Demo Student',
-      password: 'student123',
+      password: 'student',
       roles: ['student'],
       userMetadata: {},
       appMetadata: {},
